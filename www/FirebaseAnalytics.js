@@ -49,7 +49,7 @@ module.exports = {
             exec(resolve, reject, PLUGIN_NAME, "setDefaultEventParameters", [defaults || {}]);
         });
     },
-    requestTrackingAuthorization: function(success, error, showInformation, title, message, buttonTitle) {
+    requestTrackingAuthorization: function(showInformation, title, message, buttonTitle) {
         return new Promise(function(resolve, reject) {
 
             if(showInformation) {
