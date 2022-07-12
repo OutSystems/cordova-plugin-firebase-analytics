@@ -8,6 +8,9 @@ The changes documented here do not include those from the original repository.
 
 ## [Unreleased]
 
+### 2021-07-12
+- Removed unused parameters from RequestTrackingAuthorization (https://outsystemsrd.atlassian.net/browse/RMET-1715)
+
 ## 5.0.0-OS5
 ### 2021-05-16
 - Update dependency to firebase-core to have error message improved (https://outsystemsrd.atlassian.net/browse/RMET-1538)
