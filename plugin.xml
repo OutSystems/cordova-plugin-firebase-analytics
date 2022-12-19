@@ -22,9 +22,9 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
     <preference name="ANALYTICS_COLLECTION_ENABLED" default="true" />
     <preference name="AUTOMATIC_SCREEN_REPORTING_ENABLED" default="true" />
-    <!--<preference name="USER_TRACKING_DESCRIPTION_IOS" default="$(PRODUCT_NAME) needs your attention." />-->
+    <preference name="USER_TRACKING_DESCRIPTION_IOS" default="$(PRODUCT_NAME) needs your attention." />
 
-    <dependency id="cordova-outsystems-firebase-core" url="https://github.com/OutSystems/cordova-outsystems-firebase-core.git#1.0.0"/>
+    <dependency id="cordova-outsystems-firebase-core" url="https://github.com/OutSystems/cordova-outsystems-firebase-core.git#1.0.1"/>
 
     <platform name="ios">
         <preference name="IOS_FIREBASE_ANALYTICS_VERSION" default="~> 8.6.0"/>
@@ -49,7 +49,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             <string>$AUTOMATIC_SCREEN_REPORTING_ENABLED</string>
         </config-file>
         <config-file target="*-Info.plist" parent="NSUserTrackingUsageDescription">
-            <string>os_user_tracking_descrption_placeholder</string>
+            <string>$USER_TRACKING_DESCRIPTION_IOS</string>
         </config-file>
 
         <header-file src="src/ios/FirebaseAnalyticsPlugin.h" />
@@ -67,7 +67,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     </platform>
 
     <platform name="android">
-        <preference name="ANDROID_FIREBASE_ANALYTICS_VERSION" default="19.0.+"/>
+        <preference name="ANDROID_FIREBASE_ANALYTICS_VERSION" default="21.1.1"/>
 
         <hook type="before_plugin_install" src="hooks/android/build_gradle_add_dependency.js" />
 

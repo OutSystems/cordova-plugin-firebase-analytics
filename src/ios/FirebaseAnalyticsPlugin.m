@@ -101,26 +101,22 @@
 - (void)showTrackingAuthorizationPopup:(CDVInvokedUrlCommand *)command {
     
     if (@available(iOS 14, *)) {
-        [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
-            BOOL result = false;
-            switch(status) {
-                case ATTrackingManagerAuthorizationStatusAuthorized: {
-                    result = true;
-                    break;
-                }
-                default: {
-                    result = false;
-                    break;
-                }
-            }
-            CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:result];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }];
+        
+        NSDictionary *dict = NSBundle.mainBundle.infoDictionary;
+        
+        if([dict objectForKey:@"NSUserTrackingUsageDescription"]){
+            [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+                BOOL result = status == ATTrackingManagerAuthorizationStatusAuthorized;
+                
+                CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:result];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            }];
+            return;
+        }
     }
-    else {
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:true];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }
+    
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:true];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 typedef void (^showPermissionInformationPopupHandler)(UIAlertAction*);

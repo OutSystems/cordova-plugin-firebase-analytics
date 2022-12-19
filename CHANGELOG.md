@@ -11,6 +11,28 @@ The changes documented here do not include those from the original repository.
 ### 2022-10-31
 - Replaced jcenter with more up to date mavenCentral [RMET-2036](https://outsystemsrd.atlassian.net/browse/RMET-2036)
 
+### 2022-11-10
+- Use fixed versions (https://outsystemsrd.atlassian.net/browse/RMET-2045).
+
+## 5.0.0-OS7
+### 2022-08-17
+- Update Firebase Analytics version to use `21.1.+` (https://outsystemsrd.atlassian.net/browse/RMET-1766).
+
+## 5.0.0-OS6
+### 2021-07-12
+- Removed unused parameters from RequestTrackingAuthorization (https://outsystemsrd.atlassian.net/browse/RMET-1715)
+
+## 5.0.0-OS5
+### 2021-05-16
+- Update dependency to firebase-core to have error message improved (https://outsystemsrd.atlassian.net/browse/RMET-1538)
+
+## 5.0.0-OS4
+### 2021-05-09
+- Made NSUserTrackingUsageDescription optional in .plist file (https://outsystemsrd.atlassian.net/browse/RMET-1547)
+
+### 2021-05-06
+- Fixed default value for NSUserTrackingUsageDescription in plugin.xml (https://outsystemsrd.atlassian.net/browse/RMET-1547)
+
 ## 5.0.0-OS3
 ## 2022-04-19
 - Hook to add google services dependency to build.gradle. [RMET-1497](https://outsystemsrd.atlassian.net/browse/RMET-1497)
