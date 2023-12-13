@@ -51,5 +51,8 @@ module.exports = {
     },
     requestTrackingAuthorization: function(showInformation, title, message, buttonTitle, success, error) {
         exec(success, error, PLUGIN_NAME, 'requestTrackingAuthorization', [showInformation, title, message, buttonTitle]);
+    },
+    logECommerceEvent: function(event, eventParameters, items, success, error) {
+        exec(success, error, PLUGIN_NAME, 'logECommerceEvent', [event, eventParameters, items]);
     }
 };
