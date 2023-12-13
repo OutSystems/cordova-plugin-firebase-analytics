@@ -8,6 +8,9 @@ The changes documented here do not include those from the original repository.
 
 ## [Unreleased]
 
+### 2023-12-13
+- Feat: add new e-commerce logging method (https://outsystemsrd.atlassian.net/browse/RMET-2729).
+
 ## 5.0.0-OS10
 
 ### 2023-08-11
