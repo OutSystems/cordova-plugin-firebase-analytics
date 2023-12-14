@@ -8,6 +8,9 @@ The changes documented here do not include those from the original repository.
 
 ## [Unreleased]
 
+### 2023-12-18
+- Feat: Implement e-commerce logging on iOS (https://outsystemsrd.atlassian.net/browse/RMET-2731).
+
 ### 2023-12-13
 - Feat: add new e-commerce logging method (https://outsystemsrd.atlassian.net/browse/RMET-2729).
 

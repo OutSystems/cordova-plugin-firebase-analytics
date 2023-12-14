@@ -38,6 +38,8 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             </feature>
         </config-file>
 
+        <dependency id="cordova-plugin-add-swift-support" url="https://github.com/OutSystems/cordova-plugin-add-swift-support.git#2.0.3-OS1"/>
+
         <!--
             use a bit hacky method to set boolean value as a string:
             https://developer.apple.com/documentation/foundation/nsstring/1409420-boolvalue?preferredLanguage=occ
@@ -54,6 +56,23 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
         <header-file src="src/ios/FirebaseAnalyticsPlugin.h" />
         <source-file src="src/ios/FirebaseAnalyticsPlugin.m" />
+
+        <source-file src="src/ios/Common/Extensions/StringConvertable.swift" target-dir="Common/Extensions" />
+        <source-file src="src/ios/Common/OSFANLError.swift" target-dir="Common" />
+        <source-file src="src/ios/Common/OSFANLGlobalValues.swift" target-dir="Common" />
+        <source-file src="src/ios/Common/OSFANLInputDataFieldKey.swift" target-dir="Common" />
+
+        <source-file src="src/ios/InputTransformer/OSFANLInputTransformable.swift" target-dir="InputTransformer" />
+        <source-file src="src/ios/InputTransformer/OSFANLInputTransformableModel.swift" target-dir="InputTransformer" />
+        <source-file src="src/ios/InputTransformer/OSFANLInputTransformer.swift" target-dir="InputTransformer" />
+
+        <source-file src="src/ios/Manager/OSFANLManageable.swift" target-dir="Manager" />
+        <source-file src="src/ios/Manager/OSFANLManager.swift" target-dir="Manager" />
+        <source-file src="src/ios/Manager/OSFANLManager+EventValidationRules.swift" target-dir="Manager" />
+        <source-file src="src/ios/Manager/OSFANLManagerFactory.swift" target-dir="Manager" />
+        <source-file src="src/ios/Manager/OSFANLOutputModel.swift" target-dir="Manager" />
+
+        <source-file src="src/ios/Validator/OSFANLEventValidator.swift" target-dir="Validator" />
 
         <podspec>
             <config>
