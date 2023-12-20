@@ -8,6 +8,9 @@ import by.chemerisuk.cordova.support.CordovaMethod;
 import by.chemerisuk.cordova.support.ReflectiveCordovaPlugin;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.outsystems.firebase.analytics.OSFANLManager;
+import com.outsystems.firebase.analytics.model.OSFANLError;
+import com.outsystems.firebase.analytics.model.OSFANLEventOutputModel;
 
 import org.apache.cordova.CallbackContext;
 import org.json.JSONException;
@@ -21,6 +24,8 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
 
     private FirebaseAnalytics firebaseAnalytics;
 
+    private OSFANLManager manager = new OSFANLManager();
+
     @Override
     protected void pluginInitialize() {
         Log.d(TAG, "Starting Firebase Analytics plugin");
@@ -33,7 +38,6 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
     @CordovaMethod
     private void logEvent(String name, JSONObject params, CallbackContext callbackContext) throws JSONException {
         this.firebaseAnalytics.logEvent(name, parse(params));
-
         callbackContext.success();
     }
 
@@ -85,6 +89,20 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
     private void requestTrackingAuthorization(JSONObject params, CallbackContext callbackContext) throws JSONException {
         //Does nothing. This is an iOS specific method.
         callbackContext.success();
+    }
+
+    @CordovaMethod
+    private void logECommerceEvent(JSONObject params, CallbackContext callbackContext) throws JSONException {
+        try {
+            OSFANLEventOutputModel b = manager.buildOutputEventFromInputJSON(params);
+            this.firebaseAnalytics.logEvent(b.getName(), b.getParameters());
+            callbackContext.success();
+        } catch (OSFANLError e) {
+            JSONObject result = new JSONObject();
+            result.put("code", e.getCode());
+            result.put("message", e.getMessage());
+            callbackContext.error(result);
+        }
     }
 
     private static Bundle parse(JSONObject params) throws JSONException {
