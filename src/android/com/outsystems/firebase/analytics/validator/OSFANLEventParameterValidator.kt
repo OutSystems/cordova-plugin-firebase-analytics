@@ -1,5 +1,6 @@
 package com.outsystems.firebase.analytics.validator
 
+import android.os.Bundle
 import com.outsystems.firebase.analytics.model.OSFANLError
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.CURRENCY
@@ -7,11 +8,13 @@ import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.EVENT_PAR
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.KEY
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.TYPE_NUMBER
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.VALUE
+import com.outsystems.firebase.analytics.model.putAny
 import org.json.JSONArray
 
 class OSFANLEventParameterValidator private constructor(
     private val requiredKeys: List<String>,
     private val requireValueCurrency: Boolean,
+    private var requireParameters: Boolean,
     private val numberKeys: List<String>,
     private var maxLimit: Int? = null
 ) {
@@ -20,6 +23,7 @@ class OSFANLEventParameterValidator private constructor(
         private val requiredKeys = mutableListOf<String>()
         private val numberKeys = mutableListOf<String>()
         private var requireValueCurrency = false
+        private var requireParameters = false
         private var maxLimit: Int? = null
 
         fun required(vararg keys: OSFANLInputDataFieldKey) =
@@ -29,23 +33,29 @@ class OSFANLEventParameterValidator private constructor(
             apply { keys.forEach { numberKeys.add(it.json) } }
 
         fun requireCurrencyValue() = apply { requireValueCurrency = true }
+        fun requireParameters() = apply { this.requireParameters = true }
         fun max(limit: Int) = apply { this.maxLimit = limit }
 
         fun build() = OSFANLEventParameterValidator(
             requiredKeys,
             requireValueCurrency,
+            requireParameters,
             numberKeys,
             maxLimit
         )
     }
 
-    fun validate(input: JSONArray) {
+    fun validate(input: JSONArray): Bundle {
+
+        if(input.length() == 0 && requireParameters)
+            throw OSFANLError.missing(EVENT_PARAMETERS.json)
 
         // validate maximum limit
         maxLimit?.let {
             if (input.length() >= it) throw OSFANLError.tooMany(EVENT_PARAMETERS.json, it)
         }
 
+        val result = Bundle()
         val parameterKeySet = mutableSetOf<String>()
         for (i in 0 until input.length()) {
             val parameter = input.getJSONObject(i)
@@ -65,6 +75,7 @@ class OSFANLEventParameterValidator private constructor(
                 throw OSFANLError.invalidType(VALUE.json, TYPE_NUMBER.json)
 
             parameterKeySet.add(key)
+            result.putAny(key, value)
         }
 
         // validate required keys
@@ -86,6 +97,7 @@ class OSFANLEventParameterValidator private constructor(
                 throw OSFANLError.missing(CURRENCY.json)
         }
 
+        return result
     }
 
     /*

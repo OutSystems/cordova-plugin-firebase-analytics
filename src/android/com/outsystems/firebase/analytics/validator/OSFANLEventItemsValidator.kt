@@ -1,5 +1,6 @@
 package com.outsystems.firebase.analytics.validator
 
+import android.os.Bundle
 import com.outsystems.firebase.analytics.model.OSFANLDefaultValues
 import com.outsystems.firebase.analytics.model.OSFANLError
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.CUSTOM_PARAMETERS
@@ -7,35 +8,47 @@ import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.ITEMS
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.ITEM_ID
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.ITEM_NAME
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.KEY
+import com.outsystems.firebase.analytics.model.putAny
 import org.json.JSONArray
 
-class OSFANLEventItemsValidator(private var minLimit: OSFANLMinimumRequired? = null) {
+class OSFANLEventItemsValidator(
+    private var minLimit: OSFANLMinimumRequired = OSFANLMinimumRequired.NONE
+) {
 
-    fun validate(items: JSONArray) {
+    fun validate(items: JSONArray): List<Bundle> {
+
+        val result = mutableListOf<Bundle>()
 
         // validate minimum limit
-        minLimit?.let {
-            when (it) {
-                OSFANLMinimumRequired.AT_LEAST_ONE -> if (items.length() == 0) throw OSFANLError.missing(
-                    ITEMS.json
-                )
+        when (minLimit) {
+            // no processing is needed
+            OSFANLMinimumRequired.NONE -> if(items.length() == 0) return result
+            OSFANLMinimumRequired.AT_LEAST_ONE -> if (items.length() == 0)
+                throw OSFANLError.missing(ITEMS.json)
+            OSFANLMinimumRequired.ONE -> if (items.length() == 0)
+                throw OSFANLError.tooMany(ITEMS.json, OSFANLDefaultValues.itemQuantity)
+            //else
+            //    result = JSONArray().apply { put(items.getJSONObject(0)) }
 
-                OSFANLMinimumRequired.ONE -> if (items.length() != 1) throw OSFANLError.tooMany(
-                    ITEMS.json,
-                    1
-                )
-            }
         }
 
         // validate maximum limit
         if (items.length() >= OSFANLDefaultValues.eventItemsMaximum)
             throw OSFANLError.tooMany(ITEMS.json, OSFANLDefaultValues.eventItemsMaximum)
 
-        val itemKeySet = mutableSetOf<String>()
         for (i in 0 until items.length()) {
             val item = items.getJSONObject(i)
 
+            val itemKeySet = mutableSetOf<String>()
+            var hasId = false
+            var hasName = false
+
+            val itemBundle = Bundle()
             for (key in item.keys()) {
+                val value = item[key]
+
+                hasId = hasId || key == ITEM_ID.json
+                hasName = hasName || key == ITEM_NAME.json
 
                 if (key == CUSTOM_PARAMETERS.json) {
                     validateCustomParameters(itemKeySet, item.getJSONArray(key))
@@ -47,21 +60,17 @@ class OSFANLEventItemsValidator(private var minLimit: OSFANLMinimumRequired? = n
                     throw OSFANLError.duplicateKeys()
 
                 itemKeySet.add(key)
+                itemBundle.putAny(key, value)
             }
+
+            result.add(itemBundle)
+
+            // should have at least one of itemId / itemName
+            if (!hasId && !hasName)
+                throw OSFANLError.missingItemIdName()
         }
 
-        // validate value / currency
-        var hasId = false
-        var hasName = false
-        itemKeySet.forEach {
-            hasId = hasId || it == ITEM_ID.json
-            hasName = hasName || it == ITEM_NAME.json
-        }
-
-        // should have at least one of itemId / itemName
-        if (!hasId && !hasName)
-            throw OSFANLError.missingItemIdName()
-
+        return result
     }
 
     private fun validateCustomParameters(

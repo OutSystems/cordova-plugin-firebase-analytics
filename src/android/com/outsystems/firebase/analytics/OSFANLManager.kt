@@ -11,6 +11,8 @@ import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.SHIPPING
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.TAX
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.TRANSACTION_ID
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.VALUE
+import com.outsystems.firebase.analytics.model.getArrayOrEmpty
+import com.outsystems.firebase.analytics.model.getStringOrNull
 import com.outsystems.firebase.analytics.model.putAny
 import com.outsystems.firebase.analytics.validator.OSFANLEventItemsValidator
 import com.outsystems.firebase.analytics.validator.OSFANLEventParameterValidator
@@ -18,15 +20,16 @@ import com.outsystems.firebase.analytics.validator.OSFANLMinimumRequired.AT_LEAS
 import com.outsystems.firebase.analytics.validator.OSFANLMinimumRequired.ONE
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.Serializable
 
 class OSFANLManager {
-
+    
     @Throws(OSFANLError::class)
     fun buildOutputEventFromInputJSON(input: JSONObject): OSFANLEventOutputModel {
 
-        val eventName = input.getString(EVENT.json)
-        val parameters = JSONArray(input.getString(EVENT_PARAMETERS.json))
-        val items = JSONArray(input.getString(ITEMS.json))
+        val eventName = input.getStringOrNull(EVENT.json) ?: throw OSFANLError.missing(EVENT.json)
+        val parameters = input.getArrayOrEmpty(EVENT_PARAMETERS.json)
+        val items = input.getArrayOrEmpty(ITEMS.json)
 
         val eventBuilderMethod = getEventBuilderMethod(eventName)
         val eventBundle = eventBuilderMethod(this, parameters, items)
@@ -75,7 +78,7 @@ class OSFANLManager {
             OSFANLEventParameterValidator.Builder()
                 .requireCurrencyValue()
                 .build(),
-            OSFANLEventItemsValidator(AT_LEAST_ONE)
+            OSFANLEventItemsValidator(minLimit = AT_LEAST_ONE)
         )
     }
 
@@ -91,7 +94,7 @@ class OSFANLManager {
                 .required(TRANSACTION_ID)
                 .number(SHIPPING, TAX)
                 .build(),
-            OSFANLEventItemsValidator(AT_LEAST_ONE)
+            OSFANLEventItemsValidator(minLimit = AT_LEAST_ONE)
         )
     }
 
@@ -117,7 +120,7 @@ class OSFANLManager {
         return buildAndValidateParameterBundle(
             parameters,
             items,
-            itemsValidator = OSFANLEventItemsValidator(ONE)
+            itemsValidator = OSFANLEventItemsValidator(minLimit = ONE)
         )
     }
 
@@ -135,7 +138,7 @@ class OSFANLManager {
         return buildAndValidateParameterBundle(
             parameters,
             items,
-            itemsValidator = OSFANLEventItemsValidator(AT_LEAST_ONE)
+            itemsValidator = OSFANLEventItemsValidator(minLimit = AT_LEAST_ONE)
         )
     }
 
@@ -146,17 +149,15 @@ class OSFANLManager {
         itemsValidator: OSFANLEventItemsValidator = OSFANLEventItemsValidator()
     ): Bundle {
 
-        val bundle = Bundle()
-
         // validate parameters
-        parametersValidator.validate(parameters)
+        val parameterBundle = parametersValidator.validate(parameters)
 
         // validate items
-        itemsValidator.validate(items)
+        val itemsBundle = itemsValidator.validate(items)
+        if(itemsBundle.isNotEmpty())
+            parameterBundle.putSerializable(ITEMS.json, itemsBundle as Serializable)
 
-        bundle.putAny(ITEMS.json, items)
-
-        return bundle
+        return parameterBundle
     }
 
 }

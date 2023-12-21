@@ -37,7 +37,9 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
 
     @CordovaMethod
     private void logEvent(String name, JSONObject params, CallbackContext callbackContext) throws JSONException {
-        this.firebaseAnalytics.logEvent(name, parse(params));
+        Bundle b = parse(params);
+        Log.d("COMMERCE", b.toString());
+        this.firebaseAnalytics.logEvent(name, b);
         callbackContext.success();
     }
 
@@ -95,6 +97,8 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
     private void logECommerceEvent(JSONObject params, CallbackContext callbackContext) throws JSONException {
         try {
             OSFANLEventOutputModel b = manager.buildOutputEventFromInputJSON(params);
+            String data = b.getParameters().toString();
+            Log.d("COMMERCE", data);
             this.firebaseAnalytics.logEvent(b.getName(), b.getParameters());
             callbackContext.success();
         } catch (OSFANLError e) {

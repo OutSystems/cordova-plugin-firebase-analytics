@@ -95,6 +95,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <source-file src="src/android/FirebaseAnalyticsPlugin.java" target-dir="src/by/chemerisuk/cordova/firebase/" />
         <source-file src="src/android/com/outsystems/firebase/analytics/model/OSFANLAnalyticsEvent.kt" target-dir="app/src/main/kotlin/com/outsystems/firebase/analytics/model/" />
         <source-file src="src/android/com/outsystems/firebase/analytics/model/OSFANLBundle+putAny.kt" target-dir="app/src/main/kotlin/com/outsystems/firebase/analytics/model/" />
+        <source-file src="src/android/com/outsystems/firebase/analytics/model/OSFANLJSONArray+extension.kt" target-dir="app/src/main/kotlin/com/outsystems/firebase/analytics/model/" />
         <source-file src="src/android/com/outsystems/firebase/analytics/model/OSFANLDefaultValues.kt" target-dir="app/src/main/kotlin/com/outsystems/firebase/analytics/model/" />
         <source-file src="src/android/com/outsystems/firebase/analytics/model/OSFANLError.kt" target-dir="app/src/main/kotlin/com/outsystems/firebase/analytics/model/" />
         <source-file src="src/android/com/outsystems/firebase/analytics/model/OSFANLEventOutputModel.kt" target-dir="app/src/main/kotlin/com/outsystems/firebase/analytics/model/" />
