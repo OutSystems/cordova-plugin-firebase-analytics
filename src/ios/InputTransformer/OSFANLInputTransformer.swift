@@ -42,10 +42,6 @@ private extension OSFANLInputTransformer {
             }
             
             var resultItem: InputItemData = [:]
-            // insert quantity when missing
-            if !itemData.keys.contains(OSFANLInputDataFieldKey.quantity.rawValue) {
-                resultItem[OSFANLInputDataFieldKey.quantity.rawValue] = OSFANLDefaultValues.itemQuantity
-            }
             
             let customParametersSplit = Dictionary(grouping: itemData) { $0.key == OSFANLInputDataFieldKey.customParameters.rawValue }
             if let regularParameterArray = customParametersSplit[false] { resultItem += self.flat(tupleArray: regularParameterArray) }

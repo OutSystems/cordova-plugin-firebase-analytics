@@ -12,14 +12,14 @@ enum OSFANLError: Error {
 extension OSFANLError: CustomNSError {
     var errorCode: Int {
         switch self {
-        case .duplicateItemsIn(_): return 1
+        case .duplicateItemsIn: return 1
         case .duplicateKeys: return 2
-        case .invalidType(_, _): return 3
+        case .invalidType: return 3
         case .logEcommerceEventInputArgumentsIssue: return 4
-        case .missing(_): return 5
+        case .missing: return 5
         case .missingItemIdName: return 6
-        case .tooMany(_, _): return 7
-        case .unexpected(_): return 8
+        case .tooMany: return 7
+        case .unexpected: return 8
         }
     }
     
@@ -38,8 +38,8 @@ extension OSFANLError: CustomNSError {
     
     var errorUserInfo: [String: Any] {
         [
-            "code"      : "OS-PLUG-FANL-\(String(format: "%04d", self.errorCode))",
-            "message"   : self.errorDescription ?? ""
+            "code": "OS-PLUG-FANL-\(String(format: "%04d", self.errorCode))",
+            "message": self.errorDescription ?? ""
         ]
     }
 }

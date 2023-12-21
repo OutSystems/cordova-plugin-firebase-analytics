@@ -58,8 +58,8 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <source-file src="src/ios/FirebaseAnalyticsPlugin.m" />
 
         <source-file src="src/ios/Common/Extensions/StringConvertable.swift" target-dir="Common/Extensions" />
+        <source-file src="src/ios/Common/OSFANLDefaultValues.swift" target-dir="Common" />
         <source-file src="src/ios/Common/OSFANLError.swift" target-dir="Common" />
-        <source-file src="src/ios/Common/OSFANLGlobalValues.swift" target-dir="Common" />
         <source-file src="src/ios/Common/OSFANLInputDataFieldKey.swift" target-dir="Common" />
 
         <source-file src="src/ios/InputTransformer/OSFANLInputTransformable.swift" target-dir="InputTransformer" />

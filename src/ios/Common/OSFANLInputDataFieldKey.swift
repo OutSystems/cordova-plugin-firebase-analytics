@@ -10,7 +10,6 @@ enum OSFANLInputDataFieldKey: String {
     case itemName = "item_name"
     case items
     case key
-    case quantity
     case shipping
     case tax
     case transactionId = "transaction_id"

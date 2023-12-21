@@ -5,20 +5,20 @@ typealias ValidationMethod = (InputParameterData?, inout [InputItemData]?) throw
 extension OSFANLManager {
     convenience init(_ inputTransformer: OSFANLInputTransformable) {
         let eventValidationRulesDictionary = [
-            AnalyticsEventAddPaymentInfo:   Self.validateValueCurrencyAndMultipleItemsParameters(eventData:itemsData:),
-            AnalyticsEventAddShippingInfo:  Self.validateValueCurrencyAndMultipleItemsParameters(eventData:itemsData:),
-            AnalyticsEventAddToCart:        Self.validateValueCurrencyAndMultipleItemsParameters(eventData:itemsData:),
-            AnalyticsEventAddToWishlist:    Self.validateValueCurrencyAndMultipleItemsParameters(eventData:itemsData:),
-            AnalyticsEventBeginCheckout:    Self.validateValueCurrencyAndMultipleItemsParameters(eventData:itemsData:),
-            AnalyticsEventPurchase:         Self.validatePurchaseParameters(eventData:itemsData:),
-            AnalyticsEventRefund:           Self.validateRefundParameters(eventData:itemsData:),
-            AnalyticsEventRemoveFromCart:   Self.validateValueCurrencyAndMultipleItemsParameters(eventData:itemsData:),
-            AnalyticsEventSelectItem:       Self.validateOneItemParameters(eventData:itemsData:),
-            AnalyticsEventSelectPromotion:  Self.validateSelectPromotionParameters(eventData:itemsData:),
-            AnalyticsEventViewCart:         Self.validateValueCurrencyAndMultipleItemsParameters(eventData:itemsData:),
-            AnalyticsEventViewItem:         Self.validateValueCurrencyAndMultipleItemsParameters(eventData:itemsData:),
-            AnalyticsEventViewItemList:     Self.validateViewItemListParameters(eventData:itemsData:),
-            AnalyticsEventViewPromotion:    Self.validateOneItemParameters(eventData:itemsData:)
+            AnalyticsEventAddPaymentInfo: Self.validateValueCurrencyAndMultipleItemsParameters(eventData:itemsData:),
+            AnalyticsEventAddShippingInfo: Self.validateValueCurrencyAndMultipleItemsParameters(eventData:itemsData:),
+            AnalyticsEventAddToCart: Self.validateValueCurrencyAndMultipleItemsParameters(eventData:itemsData:),
+            AnalyticsEventAddToWishlist: Self.validateValueCurrencyAndMultipleItemsParameters(eventData:itemsData:),
+            AnalyticsEventBeginCheckout: Self.validateValueCurrencyAndMultipleItemsParameters(eventData:itemsData:),
+            AnalyticsEventPurchase: Self.validatePurchaseParameters(eventData:itemsData:),
+            AnalyticsEventRefund: Self.validateRefundParameters(eventData:itemsData:),
+            AnalyticsEventRemoveFromCart: Self.validateValueCurrencyAndMultipleItemsParameters(eventData:itemsData:),
+            AnalyticsEventSelectItem: Self.validateOneItemParameters(eventData:itemsData:),
+            AnalyticsEventSelectPromotion: Self.validateSelectPromotionParameters(eventData:itemsData:),
+            AnalyticsEventViewCart: Self.validateValueCurrencyAndMultipleItemsParameters(eventData:itemsData:),
+            AnalyticsEventViewItem: Self.validateValueCurrencyAndMultipleItemsParameters(eventData:itemsData:),
+            AnalyticsEventViewItemList: Self.validateViewItemListParameters(eventData:itemsData:),
+            AnalyticsEventViewPromotion: Self.validateOneItemParameters(eventData:itemsData:)
         ]
         
         let eventValidator = OSFANLEventValidator(eventValidatorMapping: eventValidationRulesDictionary)
@@ -71,14 +71,16 @@ private extension OSFANLManager {
             itemsData?.removeLast(nonNilItemsData.count - 1)
         }
         
-        if let eventData {
-            let itemListKey: [String] = [OSFANLInputDataFieldKey.itemListId, .itemListName].map(\.rawValue)
+        if let eventData, let nonNilItemsData = itemsData {
+            let itemListKey: [String] = [OSFANLInputDataFieldKey.itemListId, .itemListName].map(\.rawValue).filter { eventData.keys.contains($0) }
             
-            if eventData.keys.contains(where: { itemListKey.contains($0) }) {
-                if let nonNilItemsData = itemsData {
-                    for (index, itemData) in nonNilItemsData.enumerated() where itemData.keys.contains(where: { itemListKey.contains($0) }) {
-                        itemsData?[index][OSFANLInputDataFieldKey.itemListId.rawValue] = nil
-                        itemsData?[index][OSFANLInputDataFieldKey.itemListName.rawValue] = nil
+            if !itemListKey.isEmpty {
+                for (index, itemData) in nonNilItemsData.enumerated() where itemData.keys.contains(where: { itemListKey.contains($0) }) {
+                    if let firstItemListKey = itemListKey.first {
+                        itemsData?[index][firstItemListKey] = nil
+                        if let lastItemListKey = itemListKey.last, lastItemListKey != firstItemListKey {
+                            itemsData?[index][lastItemListKey] = nil
+                        }
                     }
                 }
             }
