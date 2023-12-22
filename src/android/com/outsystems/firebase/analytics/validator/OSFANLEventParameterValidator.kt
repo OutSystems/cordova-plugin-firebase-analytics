@@ -23,7 +23,6 @@ import org.json.JSONArray
 class OSFANLEventParameterValidator private constructor(
     private val requiredKeys: List<String>,
     private val requireValueCurrency: Boolean,
-    private var requireParameters: Boolean,
     private val numberKeys: List<String>,
     private var maxLimit: Int? = null
 ) {
@@ -32,7 +31,6 @@ class OSFANLEventParameterValidator private constructor(
         private val requiredKeys = mutableListOf<String>()
         private val numberKeys = mutableListOf<String>()
         private var requireValueCurrency = false
-        private var requireParameters = false
         private var maxLimit: Int? = null
 
         fun required(vararg keys: OSFANLInputDataFieldKey) =
@@ -40,13 +38,11 @@ class OSFANLEventParameterValidator private constructor(
         fun number(vararg keys: OSFANLInputDataFieldKey) =
             apply { keys.forEach { numberKeys.add(it.json) } }
         fun requireCurrencyValue() = apply { requireValueCurrency = true }
-        fun requireParameters() = apply { this.requireParameters = true }
         fun max(limit: Int) = apply { this.maxLimit = limit }
 
         fun build() = OSFANLEventParameterValidator(
             requiredKeys,
             requireValueCurrency,
-            requireParameters,
             numberKeys,
             maxLimit
         )
@@ -58,9 +54,6 @@ class OSFANLEventParameterValidator private constructor(
      * @return a bundle of parameters to send with the log event
      */
     fun validate(input: JSONArray): Bundle {
-
-        if(input.length() == 0 && requireParameters)
-            throw OSFANLError.missing(EVENT_PARAMETERS.json)
 
         // validate maximum limit
         maxLimit?.let {
