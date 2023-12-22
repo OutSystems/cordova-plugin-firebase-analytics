@@ -1,5 +1,10 @@
 package com.outsystems.firebase.analytics.model
 
+/**
+ * Represents an error thrown by the plugin
+ * @property code the error code
+ * @property message the error message
+ */
 class OSFANLError private constructor(
     codeNumber: ErrorCodes,
     override val message: String

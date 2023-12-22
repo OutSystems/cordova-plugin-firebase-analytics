@@ -1,5 +1,8 @@
 package com.outsystems.firebase.analytics.model
 
+/**
+ * Holds the default size values for the input data
+ */
 class OSFANLDefaultValues {
     companion object {
         const val itemQuantity: Int = 1

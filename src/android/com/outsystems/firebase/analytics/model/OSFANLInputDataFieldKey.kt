@@ -1,5 +1,9 @@
 package com.outsystems.firebase.analytics.model
 
+/**
+ * Represents all supported analytics events keys
+ * @property json the json value for each event key
+ */
 enum class OSFANLInputDataFieldKey(val json: String) {
     CUSTOM_PARAMETERS("custom_parameters"),
     CURRENCY("currency"),

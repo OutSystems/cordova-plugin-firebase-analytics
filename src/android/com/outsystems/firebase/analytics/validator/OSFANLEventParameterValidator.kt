@@ -11,6 +11,15 @@ import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.VALUE
 import com.outsystems.firebase.analytics.model.putAny
 import org.json.JSONArray
 
+/**
+ * Gets a String from a JSONObject
+ * @property requiredKeys a list of keys which should be required
+ * @property requireValueCurrency indicates if value and currency should be validated
+ * @property requireParameters indicates if at least one  parameter should be required
+ * @property numberKeys indicates the keys which should be validated as numbers
+ * @property maxLimit indicates the maximum limit of parameters
+ * @return the String or null if the key isn't present
+ */
 class OSFANLEventParameterValidator private constructor(
     private val requiredKeys: List<String>,
     private val requireValueCurrency: Boolean,
@@ -28,10 +37,8 @@ class OSFANLEventParameterValidator private constructor(
 
         fun required(vararg keys: OSFANLInputDataFieldKey) =
             apply { keys.forEach { requiredKeys.add(it.json) } }
-
         fun number(vararg keys: OSFANLInputDataFieldKey) =
             apply { keys.forEach { numberKeys.add(it.json) } }
-
         fun requireCurrencyValue() = apply { requireValueCurrency = true }
         fun requireParameters() = apply { this.requireParameters = true }
         fun max(limit: Int) = apply { this.maxLimit = limit }
@@ -45,6 +52,11 @@ class OSFANLEventParameterValidator private constructor(
         )
     }
 
+    /**
+     * Validates a JSONArray of parameters
+     * @param input the array of parameters to validate
+     * @return a bundle of parameters to send with the log event
+     */
     fun validate(input: JSONArray): Bundle {
 
         if(input.length() == 0 && requireParameters)
@@ -99,94 +111,5 @@ class OSFANLEventParameterValidator private constructor(
 
         return result
     }
-
-    /*
-   private fun validateEventParameters(
-       parameters: JSONArray,
-       requiredParameters: Array<OSFANLInputDataFieldKey>,
-   ) {
-
-       for (i in 0 until parameters.length()) {
-           val parameter = parameters.get(i) as JSONObject
-           val key = parameter.getString(OSFANLInputDataFieldKey.KEY.json)
-           val value = parameter.get(VALUE.json)
-           constraints.forEach { it.bind(key, value) }
-           bundle.putAny(key, value)
-       }
-       constraints.forEach { it.validate() }
-   }
-
-   private fun validateCustomParameters(customParameters: JSONArray) {
-       // validate custom parameters max size
-       if (customParameters.length() >= OSFANLDefaultValues.itemCustomParametersMaximum)
-           throw OSFANLError.tooMany(
-               OSFANLInputDataFieldKey.CUSTOM_PARAMETERS.json,
-               OSFANLDefaultValues.itemCustomParametersMaximum
-           )
-
-       // validate custom parameters content
-       val itemsKeys: MutableSet<String> = mutableSetOf()
-       for (k in 0 until customParameters.length()) {
-           val parameter = customParameters.getJSONObject(k)
-           val key = parameter.getString(OSFANLInputDataFieldKey.KEY.json)
-           if (itemsKeys.contains(key))
-               throw OSFANLError.duplicateItemsIn(key)
-           itemsKeys.add(key)
-       }
-   }
-
-   private fun validateItems(
-       items: JSONArray,
-       constraints: Array<OSFANLConstraint>
-   ) {
-
-       // validate items size
-       if (items.length() >= OSFANLDefaultValues.eventItemsMaximum)
-           throw OSFANLError.tooMany(ITEMS.json, OSFANLDefaultValues.eventItemsMaximum)
-
-       // validate items content
-       for (i in 0 until items.length()) {
-           val item = items.get(i) as JSONObject
-           for (key in item.keys()) {
-
-               if (key == OSFANLInputDataFieldKey.CUSTOM_PARAMETERS.json) {
-                   validateCustomParameters(item.getJSONArray(key))
-                   continue
-               }
-
-               val value = item.get(key)
-               constraints.forEach { it.bind(key, value) }
-           }
-       }
-       constraints.forEach { it.validate() }
-   }
-
-   fun defaultConstraints(): Array<OSFANLConstraint> {
-       return arrayOf(
-           OSFANLRequiredConstraint(),
-       )
-   }
-
-   fun currencyValueConstraints(): Array<OSFANLConstraint> {
-       return defaultConstraints() + arrayOf(
-           OSFANLRequiredIfPresentConstraint(CURRENCY, VALUE)
-       )
-   }
-
-   fun purchaseConstraints(): Array<OSFANLConstraint> {
-       return defaultConstraints() + arrayOf(
-           OSFANLRequiredIfPresentConstraint(CURRENCY, VALUE),
-           OSFANLRequiredConstraint(setOf(TRANSACTION_ID)),
-           OSFANLTypeDecimalConstraint(setOf(SHIPPING, TAX))
-       )
-   }
-
-   fun itemsConstraints(): Array<OSFANLConstraint> {
-       return arrayOf(
-           OSFANLItemIdNameConstraint(),
-       )
-   }
-
-*/
 
 }

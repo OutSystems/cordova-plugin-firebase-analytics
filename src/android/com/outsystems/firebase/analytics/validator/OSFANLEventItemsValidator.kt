@@ -11,10 +11,19 @@ import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.KEY
 import com.outsystems.firebase.analytics.model.putAny
 import org.json.JSONArray
 
+/**
+ * Responsible for validating the Event items
+ * @property minLimit the minimum expected number of items
+ */
 class OSFANLEventItemsValidator(
     private var minLimit: OSFANLMinimumRequired = OSFANLMinimumRequired.NONE
 ) {
 
+    /**
+     * Validates a JSONArray of items
+     * @param items the array of items to validate
+     * @return a list of bundles, each representing a validated item
+     */
     fun validate(items: JSONArray): List<Bundle> {
 
         val result = mutableListOf<Bundle>()
@@ -73,6 +82,12 @@ class OSFANLEventItemsValidator(
         return result
     }
 
+    /**
+     * Validates a JSONArray of custom items
+     * @param itemKeySet a set of already processed keys
+     * @param customParameters the array of custom parameters to validate
+     * @return a list of bundles, each representing a validated item
+     */
     private fun validateCustomParameters(
         itemKeySet: Set<String>,
         customParameters: JSONArray

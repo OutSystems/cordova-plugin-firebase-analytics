@@ -1,5 +1,9 @@
 package com.outsystems.firebase.analytics.model
 
+/**
+ * Represents all supported analytics events
+ * @property value the json value for each event
+ */
 enum class OSFANLAnalyticsEvent(val value: String) {
     ADD_PAYMENT_INFO("add_payment_info"),
     ADD_SHIPPING_INFO("add_shipping_info"),
@@ -17,6 +21,11 @@ enum class OSFANLAnalyticsEvent(val value: String) {
     VIEW_PROMOTION("view_promotion");
 
     companion object {
+        /**
+         * Creates a OSFANLAnalyticsEvent from string value
+         * @param value the value to use
+         * @return an OSFANLAnalyticsEvent object. `Null` if the string doesn't match any event.
+         */
         fun fromValue(value: String): OSFANLAnalyticsEvent? =
             values().find { it.value == value }
     }
