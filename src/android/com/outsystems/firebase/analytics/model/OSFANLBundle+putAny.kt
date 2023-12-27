@@ -1,7 +1,6 @@
 package com.outsystems.firebase.analytics.model
 
 import android.os.Bundle
-import org.json.JSONArray
 
 /**
  * Adds a range of different types to a bundle. Accepted types are String, Int, Double and Long

@@ -69,7 +69,6 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     <platform name="android">
         <preference name="ANDROID_FIREBASE_ANALYTICS_VERSION" default="21.1.1"/>
 
-        <hook type="before_plugin_install" src="hooks/android/build_gradle_add_dependency.js" />
 
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="FirebaseAnalytics">
@@ -92,8 +91,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <framework src="com.google.firebase:firebase-analytics:$ANDROID_FIREBASE_ANALYTICS_VERSION" />
         <framework src="build.gradle" custom="true" type="gradleReference" />
 
-        <source-file src="src/android/FirebaseAnalyticsPlugin.java" target-dir="src/by/chemerisuk/cordova/firebase/" />
-        <source-file src="src/android/com/outsystems/firebase/analytics/model/OSFANLAnalyticsEvent.kt" target-dir="app/src/main/kotlin/com/outsystems/firebase/analytics/model/" />
+        <source-file src="src/android/com/outsystems/firebase/analytics/FirebaseAnalyticsPlugin.java" target-dir="src/com/outsystems/plugins/firebase/analytics/" />
         <source-file src="src/android/com/outsystems/firebase/analytics/model/OSFANLBundle+putAny.kt" target-dir="app/src/main/kotlin/com/outsystems/firebase/analytics/model/" />
         <source-file src="src/android/com/outsystems/firebase/analytics/model/OSFANLJSONArray+extension.kt" target-dir="app/src/main/kotlin/com/outsystems/firebase/analytics/model/" />
         <source-file src="src/android/com/outsystems/firebase/analytics/model/OSFANLDefaultValues.kt" target-dir="app/src/main/kotlin/com/outsystems/firebase/analytics/model/" />

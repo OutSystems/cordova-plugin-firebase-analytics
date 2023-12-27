@@ -15,7 +15,6 @@ import org.json.JSONArray
  * Gets a String from a JSONObject
  * @property requiredKeys a list of keys which should be required
  * @property requireValueCurrency indicates if value and currency should be validated
- * @property requireParameters indicates if at least one  parameter should be required
  * @property numberKeys indicates the keys which should be validated as numbers
  * @property maxLimit indicates the maximum limit of parameters
  * @return the String or null if the key isn't present
@@ -62,6 +61,8 @@ class OSFANLEventParameterValidator private constructor(
 
         val result = Bundle()
         val parameterKeySet = mutableSetOf<String>()
+        var hasValue = false
+        var hasCurrency = false
         for (i in 0 until input.length()) {
             val parameter = input.getJSONObject(i)
             val key = parameter.getString(KEY.json)
@@ -79,6 +80,10 @@ class OSFANLEventParameterValidator private constructor(
             if (requireValueCurrency && key == VALUE.json && value.toFloatOrNull() == null)
                 throw OSFANLError.invalidType(VALUE.json, TYPE_NUMBER.json)
 
+            // search for value / currency
+            hasValue = hasValue || key == VALUE.json
+            hasCurrency = hasCurrency || key == CURRENCY.json
+
             parameterKeySet.add(key)
             result.putAny(key, value)
         }
@@ -90,17 +95,9 @@ class OSFANLEventParameterValidator private constructor(
         }
 
         // validate value / currency
-        if (requireValueCurrency) {
-            var hasValue = false
-            var hasCurrency = false
-            parameterKeySet.forEach {
-                hasValue = hasValue || it == VALUE.json
-                hasCurrency = hasCurrency || it == CURRENCY.json
-            }
-            // if value is present, currency is required
-            if (hasValue && !hasCurrency)
-                throw OSFANLError.missing(CURRENCY.json)
-        }
+        // if value is present, currency is required
+        if (requireValueCurrency && hasValue && !hasCurrency)
+            throw OSFANLError.missing(CURRENCY.json)
 
         return result
     }

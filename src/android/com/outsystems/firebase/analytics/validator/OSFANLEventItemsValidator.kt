@@ -8,6 +8,7 @@ import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.ITEMS
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.ITEM_ID
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.ITEM_NAME
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.KEY
+import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.VALUE
 import com.outsystems.firebase.analytics.model.putAny
 import org.json.JSONArray
 
@@ -26,27 +27,27 @@ class OSFANLEventItemsValidator(
      */
     fun validate(items: JSONArray): List<Bundle> {
 
+        var inputItems = items
         val result = mutableListOf<Bundle>()
 
         // validate minimum limit
         when (minLimit) {
             // no processing is needed
-            OSFANLMinimumRequired.NONE -> if(items.length() == 0) return result
-            OSFANLMinimumRequired.AT_LEAST_ONE -> if (items.length() == 0)
+            OSFANLMinimumRequired.NONE -> if(inputItems.length() == 0) return result
+            OSFANLMinimumRequired.AT_LEAST_ONE -> if (inputItems.length() == 0)
                 throw OSFANLError.missing(ITEMS.json)
-            OSFANLMinimumRequired.ONE -> if (items.length() == 0)
+            OSFANLMinimumRequired.ONE -> if (inputItems.length() == 0)
                 throw OSFANLError.tooMany(ITEMS.json, OSFANLDefaultValues.itemQuantity)
-            //else
-            //    result = JSONArray().apply { put(items.getJSONObject(0)) }
-
+            else
+                inputItems = JSONArray().apply { put(inputItems.getJSONObject(0)) }
         }
 
         // validate maximum limit
-        if (items.length() >= OSFANLDefaultValues.eventItemsMaximum)
+        if (inputItems.length() >= OSFANLDefaultValues.eventItemsMaximum)
             throw OSFANLError.tooMany(ITEMS.json, OSFANLDefaultValues.eventItemsMaximum)
 
-        for (i in 0 until items.length()) {
-            val item = items.getJSONObject(i)
+        for (i in 0 until inputItems.length()) {
+            val item = inputItems.getJSONObject(i)
 
             val itemKeySet = mutableSetOf<String>()
             var hasId = false
@@ -91,7 +92,8 @@ class OSFANLEventItemsValidator(
     private fun validateCustomParameters(
         itemKeySet: Set<String>,
         customParameters: JSONArray
-    ) {
+    ): Bundle {
+
         // validate custom parameters max size
         if (customParameters.length() >= OSFANLDefaultValues.itemCustomParametersMaximum)
             throw OSFANLError.tooMany(
@@ -100,17 +102,21 @@ class OSFANLEventItemsValidator(
             )
 
         // validate custom parameters content
+        val result = Bundle()
         val itemsKeys: MutableSet<String> = mutableSetOf()
         for (k in 0 until customParameters.length()) {
             val parameter = customParameters.getJSONObject(k)
             val key = parameter.getString(KEY.json)
+            val value = parameter.getString(VALUE.json)
 
             // validate duplicate keys
             if (itemsKeys.contains(key) || itemKeySet.contains(key))
                 throw OSFANLError.duplicateItemsIn(key)
 
             itemsKeys.add(key)
+            result.putAny(key, value)
         }
+        return result
     }
 
 }

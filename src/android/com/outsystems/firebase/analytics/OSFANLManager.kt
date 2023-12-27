@@ -1,11 +1,11 @@
-package com.outsystems.firebase.analytics;
+package com.outsystems.firebase.analytics
 
 import android.os.Bundle
-import com.outsystems.firebase.analytics.model.OSFANLAnalyticsEvent
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.outsystems.firebase.analytics.model.OSFANLError
 import com.outsystems.firebase.analytics.model.OSFANLEventOutputModel
+import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.EVENT
-import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.EVENT_PARAMETERS
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.ITEMS
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.SHIPPING
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.TAX
@@ -13,7 +13,6 @@ import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.TRANSACTI
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.VALUE
 import com.outsystems.firebase.analytics.model.getArrayOrEmpty
 import com.outsystems.firebase.analytics.model.getStringOrNull
-import com.outsystems.firebase.analytics.model.putAny
 import com.outsystems.firebase.analytics.validator.OSFANLEventItemsValidator
 import com.outsystems.firebase.analytics.validator.OSFANLEventParameterValidator
 import com.outsystems.firebase.analytics.validator.OSFANLMinimumRequired.AT_LEAST_ONE
@@ -27,8 +26,8 @@ class OSFANLManager {
     @Throws(OSFANLError::class)
     fun buildOutputEventFromInputJSON(input: JSONObject): OSFANLEventOutputModel {
 
-        val eventName = input.getStringOrNull(EVENT.json) ?: throw OSFANLError.missing(EVENT.json)
-        val parameters = input.getArrayOrEmpty(EVENT_PARAMETERS.json)
+        val eventName = input.getStringOrNull(OSFANLInputDataFieldKey.EVENT.json) ?: throw OSFANLError.missing(EVENT.json)
+        val parameters = input.getArrayOrEmpty(OSFANLInputDataFieldKey.EVENT_PARAMETERS.json)
         val items = input.getArrayOrEmpty(ITEMS.json)
 
         val eventBuilderMethod = getEventBuilderMethod(eventName)
@@ -41,26 +40,24 @@ class OSFANLManager {
         eventName: String
     ): (OSFANLManager, JSONArray, JSONArray) -> Bundle {
 
-        when (OSFANLAnalyticsEvent.fromValue(eventName)) {
+        when (eventName) {
 
-            null -> throw OSFANLError.unexpected(eventName)
-
-            OSFANLAnalyticsEvent.PURCHASE ->
+            FirebaseAnalytics.Event.PURCHASE ->
                 return OSFANLManager::buildBundleForPurchaseParametersEventType
 
-            OSFANLAnalyticsEvent.REFUND ->
+            FirebaseAnalytics.Event.REFUND ->
                 return OSFANLManager::buildBundleForRefundParametersEventType
 
-            OSFANLAnalyticsEvent.SELECT_ITEM ->
+            FirebaseAnalytics.Event.SELECT_ITEM ->
                 return OSFANLManager::buildBundleForOneItemParametersEventType
 
-            OSFANLAnalyticsEvent.SELECT_PROMOTION ->
+            FirebaseAnalytics.Event.SELECT_PROMOTION ->
                 return OSFANLManager::buildBundleForSelectPromotionParametersEventType
 
-            OSFANLAnalyticsEvent.VIEW_ITEM_LIST ->
+            FirebaseAnalytics.Event.VIEW_ITEM_LIST ->
                 return OSFANLManager::buildBundleForViewItemListParametersEventType
 
-            OSFANLAnalyticsEvent.VIEW_PROMOTION ->
+            FirebaseAnalytics.Event.VIEW_PROMOTION ->
                 return OSFANLManager::buildBundleForOneItemParametersEventType
 
             else ->
@@ -108,7 +105,7 @@ class OSFANLManager {
             OSFANLEventParameterValidator.Builder()
                 .requireCurrencyValue()
                 .required(TRANSACTION_ID)
-                .number(SHIPPING, TAX, VALUE)
+                .number(SHIPPING, TAX)
                 .build()
         )
     }
