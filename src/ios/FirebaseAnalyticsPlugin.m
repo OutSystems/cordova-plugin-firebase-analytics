@@ -1,7 +1,14 @@
 #import "FirebaseAnalyticsPlugin.h"
+#import "OutSystems-Swift.h"
 
 @import Firebase;
 @import AppTrackingTransparency;
+
+@interface FirebaseAnalyticsPlugin ()
+
+@property (strong, nonatomic) id<OSFANLManageable> manager;
+
+@end
 
 @implementation FirebaseAnalyticsPlugin
 
@@ -11,6 +18,8 @@
     if(![FIRApp defaultApp]) {
         [FIRApp configure];
     }
+    
+    self.manager = [OSFANLManagerFactory createManager];
 }
 
 - (void)logEvent:(CDVInvokedUrlCommand *)command {
@@ -21,6 +30,20 @@
 
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)logECommerceEvent:(CDVInvokedUrlCommand *)command {
+    NSDictionary *argumentsDictionary = [command argumentAtIndex:0];
+    NSError *error;
+    
+    OSFANLOutputModel *outputModel = [self.manager createEventModelFor:argumentsDictionary error:&error];
+    if (!outputModel && error) {
+        [self sendError:error forCallbackId:command.callbackId];
+        return;
+    }
+    
+    [FIRAnalytics logEventWithName:outputModel.name parameters:outputModel.parameters];
+    [self sendSuccessfulResultforCallbackId:command.callbackId];
 }
 
 - (void)setUserId:(CDVInvokedUrlCommand *)command {
@@ -141,6 +164,17 @@ typedef void (^showPermissionInformationPopupHandler)(UIAlertAction*);
     [self.viewController presentViewController:alert animated:YES completion:nil];
 }
 
+#pragma mark - Result Callback Methods (used for `LogECommerceEvent`)
+
+- (void)sendSuccessfulResultforCallbackId:(NSString *)callbackId {
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
+}
+
+- (void)sendError:(NSError *)error forCallbackId:(NSString *)callbackId {
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:error.userInfo];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
+}
 
 
 @end
