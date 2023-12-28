@@ -31,15 +31,12 @@ class OSFANLEventItemsValidator(
         val result = mutableListOf<Bundle>()
 
         // validate minimum limit
-        when (minLimit) {
-            // no processing is needed
-            OSFANLMinimumRequired.NONE -> if(inputItems.length() == 0) return result
-            OSFANLMinimumRequired.AT_LEAST_ONE -> if (inputItems.length() == 0)
-                throw OSFANLError.missing(ITEMS.json)
-            OSFANLMinimumRequired.ONE -> if (inputItems.length() == 0)
-                throw OSFANLError.tooMany(ITEMS.json, OSFANLDefaultValues.itemQuantity)
-            else
-                inputItems = JSONArray().apply { put(inputItems.getJSONObject(0)) }
+        if(inputItems.length() == 0 && minLimit != OSFANLMinimumRequired.NONE) {
+            throw OSFANLError.missing(ITEMS.json)
+        }
+
+        if (inputItems.length() > 1 && minLimit == OSFANLMinimumRequired.ONE) {
+            inputItems = JSONArray().apply { put(inputItems.getJSONObject(0)) }
         }
 
         // validate maximum limit
@@ -73,11 +70,11 @@ class OSFANLEventItemsValidator(
                 itemBundle.putAny(key, value)
             }
 
-            result.add(itemBundle)
-
             // should have at least one of itemId / itemName
             if (!hasId && !hasName)
                 throw OSFANLError.missingItemIdName()
+
+            result.add(itemBundle)
         }
 
         return result

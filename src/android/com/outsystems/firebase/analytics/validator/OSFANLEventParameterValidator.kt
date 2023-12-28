@@ -88,16 +88,16 @@ class OSFANLEventParameterValidator private constructor(
             result.putAny(key, value)
         }
 
+        // validate value / currency
+        // if value is present, currency is required
+        if (requireValueCurrency && hasValue && !hasCurrency)
+            throw OSFANLError.missing(CURRENCY.json)
+
         // validate required keys
         requiredKeys.forEach {
             if (!parameterKeySet.contains(it))
                 throw OSFANLError.missing(it)
         }
-
-        // validate value / currency
-        // if value is present, currency is required
-        if (requireValueCurrency && hasValue && !hasCurrency)
-            throw OSFANLError.missing(CURRENCY.json)
 
         return result
     }

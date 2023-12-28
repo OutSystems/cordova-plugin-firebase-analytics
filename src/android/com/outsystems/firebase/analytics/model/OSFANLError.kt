@@ -13,7 +13,7 @@ class OSFANLError private constructor(
     val code: String
 
     init {
-        code = "OS-PLUG_FANL-${codeNumber.code.toString().padStart(4, '0')}"
+        code = "OS-PLUG-FANL-${codeNumber.code.toString().padStart(4, '0')}"
     }
 
     companion object {

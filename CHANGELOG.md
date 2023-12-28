@@ -8,7 +8,6 @@ The changes documented here do not include those from the original repository.
 
 ## [Unreleased]
 
-
 ### 2023-12-22
 - Feat: add new e-commerce logging method on Android (https://outsystemsrd.atlassian.net/browse/RMET-2730).
 
