@@ -1,8 +1,9 @@
 #import "FirebaseAnalyticsPlugin.h"
 #import "OutSystems-Swift.h"
 
-@import Firebase;
 @import AppTrackingTransparency;
+@import FirebaseAnalytics;
+@import FirebaseCore;
 
 @interface FirebaseAnalyticsPlugin ()
 
