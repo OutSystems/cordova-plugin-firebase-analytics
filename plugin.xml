@@ -20,7 +20,6 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <engine name="cordova-ios" version=">=5.1.1"/>
     </engines>
 
-    <preference name="ANALYTICS_COLLECTION_ENABLED" default="true" />
     <preference name="AUTOMATIC_SCREEN_REPORTING_ENABLED" default="true" />
     <preference name="USER_TRACKING_DESCRIPTION_IOS" default="$(PRODUCT_NAME) needs your attention." />
 
@@ -34,7 +33,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <config-file target="config.xml" parent="/*">
             <feature name="FirebaseAnalytics">
                 <param name="ios-package" value="FirebaseAnalyticsPlugin" />
-                <param name="onload" value="$ANALYTICS_COLLECTION_ENABLED" />
+                <param name="onload" value="true" />
             </feature>
         </config-file>
 
@@ -44,9 +43,6 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             use a bit hacky method to set boolean value as a string:
             https://developer.apple.com/documentation/foundation/nsstring/1409420-boolvalue?preferredLanguage=occ
         -->
-        <config-file target="*-Info.plist" parent="FIREBASE_ANALYTICS_COLLECTION_ENABLED">
-            <string>$ANALYTICS_COLLECTION_ENABLED</string>
-        </config-file>
         <config-file target="*-Info.plist" parent="FirebaseAutomaticScreenReportingEnabled">
             <string>$AUTOMATIC_SCREEN_REPORTING_ENABLED</string>
         </config-file>
@@ -88,11 +84,12 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     <platform name="android">
         <preference name="ANDROID_FIREBASE_ANALYTICS_VERSION" default="21.1.1"/>
 
+        <hook type="after_prepare" src="hooks/android/androidCopyPreferences.js" />
 
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="FirebaseAnalytics">
                 <param name="android-package" value="com.outsystems.plugins.firebase.analytics.FirebaseAnalyticsPlugin" />
-                <param name="onload" value="$ANALYTICS_COLLECTION_ENABLED" />
+                <param name="onload" value="true" />
             </feature>
         </config-file>
 
@@ -101,7 +98,6 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <meta-data android:name="firebase_analytics_collection_enabled" android:value="$ANALYTICS_COLLECTION_ENABLED" />
             <meta-data android:name="google_analytics_automatic_screen_reporting_enabled" android:value="$AUTOMATIC_SCREEN_REPORTING_ENABLED" />
         </config-file>
 
