@@ -17,12 +17,10 @@ module.exports = function (context) {
         let userTrackingDescription = configParser.getPlatformPreference("USER_TRACKING_DESCRIPTION_IOS", "ios");
         if(userTrackingDescription != ""){
             obj['NSUserTrackingUsageDescription'] = userTrackingDescription;
-            fs.writeFileSync(infoPlistPath, plist.build(obj));
         }
     }
     else if(enableAppTracking == "false"){
-        delete obj['NSUserTrackingUsageDescription'];
-        fs.writeFileSync(infoPlistPath, plist.build(obj));
+        delete obj['NSUserTrackingUsageDescription'];        
     }
 
     let collectionEnabled = configParser.getGlobalPreference("ANALYTICS_COLLECTION_ENABLED");
