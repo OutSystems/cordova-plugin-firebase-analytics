@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-firebase-analytics",
-  "version": "5.0.0-OS12",
+  "version": "5.0.0-OS13",
   "description": "Cordova plugin for Firebase Analytics",
   "cordova": {
     "id": "cordova-plugin-firebase-analytics",
