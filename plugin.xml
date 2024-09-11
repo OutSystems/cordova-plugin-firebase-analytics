@@ -37,6 +37,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             </feature>
             <preference name="GradlePluginKotlinEnabled" value="true" />
             <preference name="GradlePluginKotlinCodeStyle" value="official" />
+            <preference name="AndroidXEnabled" value="true"/>
         </config-file>
 
         <dependency id="cordova-plugin-add-swift-support" url="https://github.com/OutSystems/cordova-plugin-add-swift-support.git#2.0.3-OS1"/>
