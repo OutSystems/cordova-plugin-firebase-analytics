@@ -10,12 +10,10 @@ buildscript {
     }
 }
 
-/*
 dependencies {
     implementation platform('com.google.firebase:firebase-bom:33.2.0')
     implementation("com.google.firebase:firebase-analytics")
 }
-*/
 
 // use postBuildExtras to make sure the plugin is applied after
 // cdvPluginPostBuildExtras. Therefore if googleServices is added
