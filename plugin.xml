@@ -90,6 +90,8 @@ xmlns:android="http://schemas.android.com/apk/res/android"
                 <param name="android-package" value="com.outsystems.plugins.firebase.analytics.FirebaseAnalyticsPlugin" />
                 <param name="onload" value="true" />
             </feature>
+            <preference name="GradlePluginKotlinEnabled" value="true" />
+            <preference name="GradlePluginKotlinCodeStyle" value="official" />
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/*">
