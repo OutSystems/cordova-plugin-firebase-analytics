@@ -82,7 +82,6 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     </platform>
 
     <platform name="android">
-        <preference name="ANDROID_FIREBASE_ANALYTICS_VERSION" default="21.1.1"/>
 
         <hook type="after_prepare" src="hooks/android/androidCopyPreferences.js" />
 
@@ -103,7 +102,6 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
         <dependency id="cordova-support-android-plugin" version="~1.0.0"/>
 
-        <framework src="com.google.firebase:firebase-analytics:$ANDROID_FIREBASE_ANALYTICS_VERSION" />
         <framework src="build.gradle" custom="true" type="gradleReference" />
 
         <source-file src="src/android/com/outsystems/firebase/analytics/FirebaseAnalyticsPlugin.java" target-dir="src/com/outsystems/plugins/firebase/analytics/" />
