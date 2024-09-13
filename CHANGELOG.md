@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 The changes documented here do not include those from the original repository.
 
+## Unreleased
+- Android | Update dependency to Firebase Analytics Android library (https://outsystemsrd.atlassian.net/browse/RMET-3608).
+
 ## 5.0.0-OS13
 - Fix: Make `ANALYTICS_COLLECTION_ENABLED` configurable (https://outsystemsrd.atlassian.net/browse/RMET-3503).
 
