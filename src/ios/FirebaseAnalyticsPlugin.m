@@ -143,6 +143,41 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)setConsent:(CDVInvokedUrlCommand*)command
+{
+    NSDictionary* consentDict = [command.arguments objectAtIndex:0];
+    
+    if (![consentDict isKindOfClass:[NSDictionary class]]) {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR 
+                                                        messageAsString:@"Invalid input: expected a dictionary"];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        return;
+    }
+    
+    NSMutableDictionary* firebaseConsentDict = [NSMutableDictionary dictionary];
+    
+    for (NSString* key in consentDict) {
+        FIRConsentType consentType = [self consentTypeFromString:key];
+        FIRConsentStatus consentStatus = [self consentStatusFromString:consentDict[key]];
+        
+        if (consentType != FIRConsentTypeUnspecified && consentStatus != FIRConsentStatusUnspecified) {
+            firebaseConsentDict[consentType] = @(consentStatus);
+        } else {
+            NSLog(@"Warning: Ignoring invalid consent type or status for key: %@", key);
+        }
+    }
+    
+    if (firebaseConsentDict.count > 0) {
+        [FIRAnalytics setConsent:firebaseConsentDict];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR 
+                                                        messageAsString:@"No valid consent types provided"];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+}
+
 typedef void (^showPermissionInformationPopupHandler)(UIAlertAction*);
 - (void)showPermissionInformationPopup:
 (NSString *)title :
@@ -175,6 +210,24 @@ typedef void (^showPermissionInformationPopupHandler)(UIAlertAction*);
 - (void)sendError:(NSError *)error forCallbackId:(NSString *)callbackId {
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:error.userInfo];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
+}
+
+#pragma mark - Consent Data conversion methods
+
+- (FIRConsentType)consentTypeFromString:(NSString*)string
+{
+    if ([string isEqualToString:@"AD_PERSONALIZATION"]) return FIRConsentTypeAdPersonalization;
+    if ([string isEqualToString:@"AD_STORAGE"]) return FIRConsentTypeAdStorage;
+    if ([string isEqualToString:@"AD_USER_DATA"]) return FIRConsentTypeAdUserData;
+    if ([string isEqualToString:@"ANALYTICS_STORAGE"]) return FIRConsentTypeAnalyticsStorage;
+    return FIRConsentTypeUnspecified;
+}
+
+- (FIRConsentStatus)consentStatusFromString:(NSString*)string
+{
+    if ([string isEqualToString:@"DENIED"]) return FIRConsentStatusDenied;
+    if ([string isEqualToString:@"GRANTED"]) return FIRConsentStatusGranted;
+    return FIRConsentStatusUnspecified;
 }
 
 

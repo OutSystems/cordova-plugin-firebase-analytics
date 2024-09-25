@@ -11,5 +11,6 @@
 - (void)resetAnalyticsData:(CDVInvokedUrlCommand*)command;
 - (void)setDefaultEventParameters:(CDVInvokedUrlCommand*)command;
 - (void)requestTrackingAuthorization:(CDVInvokedUrlCommand*)command;
+- (void)setConsent:(CDVInvokedUrlCommand*)command;
 
 @end
