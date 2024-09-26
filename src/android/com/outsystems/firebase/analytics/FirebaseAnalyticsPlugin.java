@@ -103,6 +103,57 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
         }
     }
 
+    @CordovaMethod
+    private void setConsent(JSONObject consentSettings, CallbackContext callbackContext) throws JSONException {
+        FirebaseAnalytics.ConsentMap.Builder consentBuilder = new FirebaseAnalytics.ConsentMap.Builder();
+        
+        Iterator<String> keys = consentSettings.keys();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            String value = consentSettings.getString(key);
+            
+            FirebaseAnalytics.ConsentType consentType = getConsentType(key);
+            FirebaseAnalytics.ConsentStatus consentStatus = getConsentStatus(value);
+            
+            if (consentType != null && consentStatus != null) {
+                consentBuilder.setConsentStatus(consentType, consentStatus);
+            } else {
+                Log.w(TAG, "Invalid consent type or status for key: " + key);
+            }
+        }
+        
+        FirebaseAnalytics.ConsentMap consentMap = consentBuilder.build();
+        this.firebaseAnalytics.setConsent(consentMap);
+        
+        callbackContext.success();
+    }
+
+    private FirebaseAnalytics.ConsentType getConsentType(String type) {
+        switch (type) {
+            case "AD_STORAGE":
+                return FirebaseAnalytics.ConsentType.AD_STORAGE;
+            case "ANALYTICS_STORAGE":
+                return FirebaseAnalytics.ConsentType.ANALYTICS_STORAGE;
+            case "AD_USER_DATA":
+                return FirebaseAnalytics.ConsentType.AD_USER_DATA;
+            case "AD_PERSONALIZATION":
+                return FirebaseAnalytics.ConsentType.AD_PERSONALIZATION;
+            default:
+                return null;
+        }
+    }
+
+    private FirebaseAnalytics.ConsentStatus getConsentStatus(String status) {
+        switch (status) {
+            case "GRANTED":
+                return FirebaseAnalytics.ConsentStatus.GRANTED;
+            case "DENIED":
+                return FirebaseAnalytics.ConsentStatus.DENIED;
+            default:
+                return null;
+        }
+    }
+
     private static Bundle parse(JSONObject params) throws JSONException {
         Bundle bundle = new Bundle();
         Iterator<String> it = params.keys();
