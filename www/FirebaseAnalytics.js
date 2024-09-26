@@ -80,6 +80,6 @@ module.exports = {
      * });
      */
     setConsent: function (consentSettings, success, error) {
-        exec(success, error, PLUGIN_NAME, 'setConsent', [consentSettings]);
+        exec(success, error, PLUGIN_NAME, 'setConsent', [JSON.parse(consentSettings)]);
     }
 };
