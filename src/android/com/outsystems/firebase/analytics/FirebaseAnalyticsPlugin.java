@@ -105,7 +105,12 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
 
     @CordovaMethod
     private void setConsent(JSONObject consentSettings, CallbackContext callbackContext) throws JSONException {
-        FirebaseAnalytics.ConsentMap.Builder consentBuilder = new FirebaseAnalytics.ConsentMap.Builder();
+        if (consentSettings == null) {
+            callbackContext.error("Invalid input: expected a dictionary");
+            return;
+        }
+
+        Map<FirebaseAnalytics.ConsentType, FirebaseAnalytics.ConsentStatus> consentMap = new HashMap<>();
         
         Iterator<String> keys = consentSettings.keys();
         while (keys.hasNext()) {
@@ -116,16 +121,18 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
             FirebaseAnalytics.ConsentStatus consentStatus = getConsentStatus(value);
             
             if (consentType != null && consentStatus != null) {
-                consentBuilder.setConsentStatus(consentType, consentStatus);
+                consentMap.put(consentType, consentStatus);
             } else {
                 Log.w(TAG, "Invalid consent type or status for key: " + key);
             }
         }
         
-        FirebaseAnalytics.ConsentMap consentMap = consentBuilder.build();
-        this.firebaseAnalytics.setConsent(consentMap);
-        
-        callbackContext.success();
+        if (!consentMap.isEmpty()) {
+            this.firebaseAnalytics.setConsent(consentMap);
+            callbackContext.success();
+        } else {
+            callbackContext.error("No valid consent types provided");
+        }
     }
 
     private FirebaseAnalytics.ConsentType getConsentType(String type) {
