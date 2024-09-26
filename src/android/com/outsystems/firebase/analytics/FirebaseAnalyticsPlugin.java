@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Iterator;
+import java.util.HashMap;
 
 
 public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
