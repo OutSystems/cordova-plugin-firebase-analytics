@@ -160,8 +160,8 @@
         FIRConsentType consentType = [self consentTypeFromString:key];
         FIRConsentStatus consentStatus = [self consentStatusFromString:consentDict[key]];
         
-        if (consentType != FIRConsentTypeUnspecified && consentStatus != FIRConsentStatusUnspecified) {
-            firebaseConsentDict[consentType] = @(consentStatus);
+        if (consentType && consentStatus) {
+            firebaseConsentDict[consentType] = consentStatus;
         } else {
             NSLog(@"Warning: Ignoring invalid consent type or status for key: %@", key);
         }
@@ -220,14 +220,14 @@ typedef void (^showPermissionInformationPopupHandler)(UIAlertAction*);
     if ([string isEqualToString:@"AD_STORAGE"]) return FIRConsentTypeAdStorage;
     if ([string isEqualToString:@"AD_USER_DATA"]) return FIRConsentTypeAdUserData;
     if ([string isEqualToString:@"ANALYTICS_STORAGE"]) return FIRConsentTypeAnalyticsStorage;
-    return FIRConsentTypeUnspecified;
+    return nil;
 }
 
 - (FIRConsentStatus)consentStatusFromString:(NSString*)string
 {
     if ([string isEqualToString:@"DENIED"]) return FIRConsentStatusDenied;
     if ([string isEqualToString:@"GRANTED"]) return FIRConsentStatusGranted;
-    return FIRConsentStatusUnspecified;
+    return nil;
 }
 
 
