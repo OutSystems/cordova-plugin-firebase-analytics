@@ -58,12 +58,8 @@ module.exports = {
     },
     /**
      * setConsent
-     * 
-     * @param {Object} consentSettings - An object containing consent settings.
-     * @param {('GRANTED'|'DENIED')} [consentSettings.AD_STORAGE] - Consent for ad storage.
-     * @param {('GRANTED'|'DENIED')} [consentSettings.ANALYTICS_STORAGE] - Consent for analytics storage.
-     * @param {('GRANTED'|'DENIED')} [consentSettings.AD_USER_DATA] - Consent for ad user data.
-     * @param {('GRANTED'|'DENIED')} [consentSettings.AD_PERSONALIZATION] - Consent for ad personalization.
+     *
+     * @param {string} consentSettings - A JSON string of an object containing consent settings.
      * @param {function} [success] - Success callback function.
      * @param {function} [error] - Error callback function.
      *
@@ -80,6 +76,6 @@ module.exports = {
      * });
      */
     setConsent: function (consentSettings, success, error) {
-        exec(success, error, PLUGIN_NAME, 'setConsent', [JSON.parse(consentSettings)]);
+        exec(success, error, PLUGIN_NAME, 'setConsent', [consentSettings]);
     }
 };
