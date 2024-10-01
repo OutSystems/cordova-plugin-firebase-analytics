@@ -107,7 +107,9 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
     }
 
     @CordovaMethod
-    private void setConsent(JSONArray consentSettings, CallbackContext callbackContext) throws JSONException {
+    private void setConsent(String consentSetting, CallbackContext callbackContext) throws JSONException {
+        JSONArray consentSettings = new JSONArray(consentSetting);
+
         if (consentSettings == null) {
             callbackContext.error("Invalid input: expected an array");
             return;
