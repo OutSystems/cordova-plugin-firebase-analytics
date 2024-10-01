@@ -138,6 +138,7 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
         }
     }
 
+    // Helper methods
     private FirebaseAnalytics.ConsentType getConsentType(int type) {
         switch (type) {
             case 1:

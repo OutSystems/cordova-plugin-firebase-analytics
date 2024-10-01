@@ -219,7 +219,7 @@ typedef void (^showPermissionInformationPopupHandler)(UIAlertAction*);
     [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
 }
 
-#pragma mark - Consent Data conversion methods
+#pragma mark - Consent Data conversion helper methods
 
 - (FIRConsentType)consentTypeFromNumber:(NSNumber*)num
 {
