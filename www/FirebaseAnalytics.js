@@ -64,16 +64,11 @@ module.exports = {
      * @param {function} [error] - Error callback function.
      *
      * @example
-     * setConsent({
-     *   AD_STORAGE: 'GRANTED',
-     *   ANALYTICS_STORAGE: 'DENIED'
-     * }, 
-     * function() {
-     *   console.log('Consent settings updated successfully');
-     * }, 
-     * function(error) {
-     *   console.error('Error updating consent settings:', error);
-     * });
+     * const consentSettings = {
+     *  AD_STORAGE: 'GRANTED',
+     *  ANALYTICS_STORAGE: 'GRANTED',
+     * };
+     * FirebaseAnalytics.setConsent(JSON.stringify(consentSettings));
      */
     setConsent: function (consentSettings, success, error) {
         exec(success, error, PLUGIN_NAME, 'setConsent', [consentSettings]);
