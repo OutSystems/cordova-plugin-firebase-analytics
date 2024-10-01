@@ -145,44 +145,54 @@
 
 - (void)setConsent:(CDVInvokedUrlCommand*)command
 {
-    NSString *jsonString = [command.arguments objectAtIndex:0];
+    CDVPluginResult* pluginResult = nil;
     
+    NSString *jsonString = [command.arguments objectAtIndex:0];
     NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
     NSError *error = nil;
     NSArray *array = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
     
     if (error != nil) {
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                                         messageAsString:error.description];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        return;
-    }
-    
-    NSMutableDictionary* firebaseConsentDict = [NSMutableDictionary dictionary];
-    
-    for (NSDictionary *item in array) {
-        NSNumber *type = item[@"Type"];
-        NSNumber *status = item[@"Status"];
-        FIRConsentType consentType = [self consentTypeFromNumber:type];
-        FIRConsentStatus consentStatus = [self consentStatusFromNumber:status];
+    } else {
+        NSMutableSet *seenTypes = [NSMutableSet set];
+        NSMutableDictionary *firebaseConsentDict = [NSMutableDictionary dictionary];
+        BOOL duplicatesFound = NO;
         
-        if (consentType && consentStatus) {
-            firebaseConsentDict[consentType] = consentStatus;
+        for (NSDictionary *item in array) {
+            NSNumber *type = item[@"Type"];
+            NSNumber *status = item[@"Status"];
+            FIRConsentType consentType = [self consentTypeFromNumber:type];
+            FIRConsentStatus consentStatus = [self consentStatusFromNumber:status];
+            
+            if (consentType && consentStatus) {
+                if ([seenTypes containsObject:consentType]) {
+                    duplicatesFound = YES;
+                    break;
+                } else {
+                    [seenTypes addObject:consentType];
+                    firebaseConsentDict[consentType] = consentStatus;
+                }
+            } else {
+                NSLog(@"Warning: Ignoring invalid consent type or status for: %@ & %@", type, status);
+            }
+        }
+        
+        if (duplicatesFound) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                              messageAsString:@"Error: Duplicate consent types found in the input array."];
         } else {
-            NSLog(@"Warning: Ignoring invalid consent type or status for: %@ & %@", type, status);
+            if (firebaseConsentDict.count > 0) {
+                [FIRAnalytics setConsent:firebaseConsentDict];
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            } else {
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                                  messageAsString:@"Error: No valid consent types provided."];
+            }
         }
     }
-    
-    if (firebaseConsentDict.count > 0) {
-        [FIRAnalytics setConsent:firebaseConsentDict];
-        printf("Success setConsent");
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    } else {
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR 
-                                                        messageAsString:@"No valid consent types provided"];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 typedef void (^showPermissionInformationPopupHandler)(UIAlertAction*);
@@ -223,18 +233,30 @@ typedef void (^showPermissionInformationPopupHandler)(UIAlertAction*);
 
 - (FIRConsentType)consentTypeFromNumber:(NSNumber*)num
 {
-    if ([num isEqualToNumber:@1]) return FIRConsentTypeAdPersonalization;
-    if ([num isEqualToNumber:@2]) return FIRConsentTypeAdStorage;
-    if ([num isEqualToNumber:@3]) return FIRConsentTypeAdUserData;
-    if ([num isEqualToNumber:@4]) return FIRConsentTypeAnalyticsStorage;
-    return nil;
+    switch ([num integerValue]) {
+        case 1:
+            return FIRConsentTypeAdPersonalization;
+        case 2:
+            return FIRConsentTypeAdStorage;
+        case 3:
+            return FIRConsentTypeAdUserData;
+        case 4:
+            return FIRConsentTypeAnalyticsStorage;
+        default:
+            return nil;
+    }
 }
 
 - (FIRConsentStatus)consentStatusFromNumber:(NSNumber *)num
 {
-    if ([num isEqualToNumber:@2]) return FIRConsentStatusDenied;
-    if ([num isEqualToNumber:@1]) return FIRConsentStatusGranted;
-    return nil;
+    switch ([num integerValue]) {
+        case 1:
+            return FIRConsentStatusGranted;
+        case 2:
+            return FIRConsentStatusDenied;
+        default:
+            return nil;
+    }
 }
 
 

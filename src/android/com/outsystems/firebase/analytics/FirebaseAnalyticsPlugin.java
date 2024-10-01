@@ -108,14 +108,16 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
 
     @CordovaMethod
     private void setConsent(String consentSetting, CallbackContext callbackContext) throws JSONException {
-        JSONArray consentSettings = new JSONArray(consentSetting);
-
-        if (consentSettings == null) {
-            callbackContext.error("Invalid input: expected an array");
+        JSONArray consentSettings;
+        try {
+            consentSettings = new JSONArray(consentSetting);
+        } catch (JSONException e) {
+            callbackContext.error(e.getMessage());
             return;
         }
 
         Map<FirebaseAnalytics.ConsentType, FirebaseAnalytics.ConsentStatus> consentMap = new HashMap<>();
+        Set<FirebaseAnalytics.ConsentType> seenTypes = new HashSet<>();
 
         for (int i = 0; i < consentSettings.length(); i++) {
             JSONObject consentItem = consentSettings.getJSONObject(i);
@@ -126,6 +128,11 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
             FirebaseAnalytics.ConsentStatus consentStatus = getConsentStatus(statusValue);
 
             if (consentType != null && consentStatus != null) {
+                if (seenTypes.contains(consentType)) {
+                    callbackContext.error("Error: Duplicate consent types found in the input array.");
+                    return;
+                }
+                seenTypes.add(consentType);
                 consentMap.put(consentType, consentStatus);
             } else {
                 Log.w(TAG, "Invalid consent type or status for item: " + consentItem);
@@ -136,7 +143,7 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
             this.firebaseAnalytics.setConsent(consentMap);
             callbackContext.success();
         } else {
-            callbackContext.error("No valid consent types provided");
+            callbackContext.error("Error: No valid consent types provided.");
         }
     }
 
