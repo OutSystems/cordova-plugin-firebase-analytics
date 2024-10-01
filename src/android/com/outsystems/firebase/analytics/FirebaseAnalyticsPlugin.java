@@ -13,6 +13,7 @@ import com.outsystems.firebase.analytics.model.OSFANLError;
 import com.outsystems.firebase.analytics.model.OSFANLEventOutputModel;
 
 import org.apache.cordova.CallbackContext;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -106,29 +107,29 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
     }
 
     @CordovaMethod
-    private void setConsent(JSONObject consentSettings, CallbackContext callbackContext) throws JSONException {
+    private void setConsent(JSONArray consentSettings, CallbackContext callbackContext) throws JSONException {
         if (consentSettings == null) {
-            callbackContext.error("Invalid input: expected a dictionary");
+            callbackContext.error("Invalid input: expected an array");
             return;
         }
 
         Map<FirebaseAnalytics.ConsentType, FirebaseAnalytics.ConsentStatus> consentMap = new HashMap<>();
-        
-        Iterator<String> keys = consentSettings.keys();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            String value = consentSettings.getString(key);
-            
-            FirebaseAnalytics.ConsentType consentType = getConsentType(key);
-            FirebaseAnalytics.ConsentStatus consentStatus = getConsentStatus(value);
-            
+
+        for (int i = 0; i < consentSettings.length(); i++) {
+            JSONObject consentItem = consentSettings.getJSONObject(i);
+            int typeValue = consentItem.getInt("Type");
+            int statusValue = consentItem.getInt("Status");
+
+            FirebaseAnalytics.ConsentType consentType = getConsentType(typeValue);
+            FirebaseAnalytics.ConsentStatus consentStatus = getConsentStatus(statusValue);
+
             if (consentType != null && consentStatus != null) {
                 consentMap.put(consentType, consentStatus);
             } else {
-                Log.w(TAG, "Invalid consent type or status for key: " + key);
+                Log.w(TAG, "Invalid consent type or status for item: " + consentItem);
             }
         }
-        
+
         if (!consentMap.isEmpty()) {
             this.firebaseAnalytics.setConsent(consentMap);
             callbackContext.success();
@@ -137,26 +138,26 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
         }
     }
 
-    private FirebaseAnalytics.ConsentType getConsentType(String type) {
+    private FirebaseAnalytics.ConsentType getConsentType(int type) {
         switch (type) {
-            case "AD_STORAGE":
-                return FirebaseAnalytics.ConsentType.AD_STORAGE;
-            case "ANALYTICS_STORAGE":
-                return FirebaseAnalytics.ConsentType.ANALYTICS_STORAGE;
-            case "AD_USER_DATA":
-                return FirebaseAnalytics.ConsentType.AD_USER_DATA;
-            case "AD_PERSONALIZATION":
+            case 1:
                 return FirebaseAnalytics.ConsentType.AD_PERSONALIZATION;
+            case 2:
+                return FirebaseAnalytics.ConsentType.AD_STORAGE;
+            case 3:
+                return FirebaseAnalytics.ConsentType.AD_USER_DATA;
+            case 4:
+                return FirebaseAnalytics.ConsentType.ANALYTICS_STORAGE;
             default:
                 return null;
         }
     }
 
-    private FirebaseAnalytics.ConsentStatus getConsentStatus(String status) {
+    private FirebaseAnalytics.ConsentStatus getConsentStatus(int status) {
         switch (status) {
-            case "GRANTED":
+            case 1:
                 return FirebaseAnalytics.ConsentStatus.GRANTED;
-            case "DENIED":
+            case 2:
                 return FirebaseAnalytics.ConsentStatus.DENIED;
             default:
                 return null;
