@@ -19,9 +19,7 @@ import org.json.JSONObject;
 
 import java.util.Iterator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 
 public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
@@ -110,42 +108,38 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
 
     @CordovaMethod
     private void setConsent(String consentSetting, CallbackContext callbackContext) throws JSONException {
-        JSONArray consentSettings;
         try {
-            consentSettings = new JSONArray(consentSetting);
+            JSONArray consentSettings = new JSONArray(consentSetting);
+
+            Map<FirebaseAnalytics.ConsentType, FirebaseAnalytics.ConsentStatus> consentMap = new HashMap<>();
+
+            for (int i = 0; i < consentSettings.length(); i++) {
+                JSONObject consentItem = consentSettings.getJSONObject(i);
+                int typeValue = consentItem.getInt("Type");
+                int statusValue = consentItem.getInt("Status");
+
+                FirebaseAnalytics.ConsentType consentType = getConsentType(typeValue);
+                FirebaseAnalytics.ConsentStatus consentStatus = getConsentStatus(statusValue);
+
+                if (consentType != null && consentStatus != null) {
+                    if (consentMap.containsKey(consentType)) {
+                        callbackContext.error("Error: Duplicate consent types found in the input array.");
+                        return;
+                    }
+                    consentMap.put(consentType, consentStatus);
+                } else {
+                    Log.w(TAG, "Invalid consent type or status for item: " + consentItem);
+                }
+            }
+
+            if (!consentMap.isEmpty()) {
+                this.firebaseAnalytics.setConsent(consentMap);
+                callbackContext.success();
+            } else {
+                callbackContext.error("Error: No valid consent types provided.");
+            }
         } catch (JSONException e) {
             callbackContext.error(e.getMessage());
-            return;
-        }
-
-        Map<FirebaseAnalytics.ConsentType, FirebaseAnalytics.ConsentStatus> consentMap = new HashMap<>();
-        Set<FirebaseAnalytics.ConsentType> seenTypes = new HashSet<>();
-
-        for (int i = 0; i < consentSettings.length(); i++) {
-            JSONObject consentItem = consentSettings.getJSONObject(i);
-            int typeValue = consentItem.getInt("Type");
-            int statusValue = consentItem.getInt("Status");
-
-            FirebaseAnalytics.ConsentType consentType = getConsentType(typeValue);
-            FirebaseAnalytics.ConsentStatus consentStatus = getConsentStatus(statusValue);
-
-            if (consentType != null && consentStatus != null) {
-                if (seenTypes.contains(consentType)) {
-                    callbackContext.error("Error: Duplicate consent types found in the input array.");
-                    return;
-                }
-                seenTypes.add(consentType);
-                consentMap.put(consentType, consentStatus);
-            } else {
-                Log.w(TAG, "Invalid consent type or status for item: " + consentItem);
-            }
-        }
-
-        if (!consentMap.isEmpty()) {
-            this.firebaseAnalytics.setConsent(consentMap);
-            callbackContext.success();
-        } else {
-            callbackContext.error("Error: No valid consent types provided.");
         }
     }
 

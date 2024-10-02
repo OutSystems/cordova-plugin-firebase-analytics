@@ -156,9 +156,7 @@
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                                         messageAsString:error.description];
     } else {
-        NSMutableSet *seenTypes = [NSMutableSet set];
         NSMutableDictionary *firebaseConsentDict = [NSMutableDictionary dictionary];
-        BOOL duplicatesFound = NO;
         
         for (NSDictionary *item in array) {
             NSNumber *type = item[@"Type"];
@@ -167,11 +165,11 @@
             FIRConsentStatus consentStatus = [self consentStatusFromNumber:status];
             
             if (consentType && consentStatus) {
-                if ([seenTypes containsObject:consentType]) {
-                    duplicatesFound = YES;
+                if (firebaseConsentDict[consentType]) {
+                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                              messageAsString:@"Error: Duplicate consent types found in the input array."];
                     break;
                 } else {
-                    [seenTypes addObject:consentType];
                     firebaseConsentDict[consentType] = consentStatus;
                 }
             } else {
@@ -179,10 +177,7 @@
             }
         }
         
-        if (duplicatesFound) {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                                              messageAsString:@"Error: Duplicate consent types found in the input array."];
-        } else {
+        if (pluginResult == nil) {
             if (firebaseConsentDict.count > 0) {
                 [FIRAnalytics setConsent:firebaseConsentDict];
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
