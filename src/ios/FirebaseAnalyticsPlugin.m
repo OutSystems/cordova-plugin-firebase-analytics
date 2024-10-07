@@ -147,7 +147,7 @@
 {
     CDVPluginResult* pluginResult = nil;
     NSError *error;
-    NSDictionary *consentModel = [OSFANLConsentHelper createConsentModelWithError:command.arguments error:&error];
+    NSDictionary *consentModel = [OSFANLConsentHelper createConsentModel:command.arguments error:&error];
     if (error) {
         NSDictionary *errorInfo = error.userInfo;
         NSString *code = errorInfo[@"code"] ?: @"UNKNOWN";
