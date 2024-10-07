@@ -9,6 +9,8 @@ import by.chemerisuk.cordova.support.ReflectiveCordovaPlugin;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.outsystems.firebase.analytics.OSFANLManager;
+import com.outsystems.firebase.analytics.model.ConsentType;
+import com.outsystems.firebase.analytics.model.ConsentStatus;
 import com.outsystems.firebase.analytics.model.OSFANLError;
 import com.outsystems.firebase.analytics.model.OSFANLEventOutputModel;
 
@@ -108,6 +110,7 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
 
     @CordovaMethod
     private void setConsent(String consentSetting, CallbackContext callbackContext) throws JSONException {
+        
         try {
             JSONArray consentSettings = new JSONArray(consentSetting);
 
@@ -118,17 +121,20 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
                 int typeValue = consentItem.getInt("Type");
                 int statusValue = consentItem.getInt("Status");
 
-                FirebaseAnalytics.ConsentType consentType = getConsentType(typeValue);
-                FirebaseAnalytics.ConsentStatus consentStatus = getConsentStatus(statusValue);
+                FirebaseAnalytics.ConsentType consentType = ConsentType.fromInt(typeValue);
+                FirebaseAnalytics.ConsentStatus consentStatus = ConsentStatus.fromInt(statusValue);
 
-                if (consentType != null && consentStatus != null) {
-                    if (consentMap.containsKey(consentType)) {
-                        callbackContext.error("Error: Duplicate consent types found in the input array.");
-                        return;
+                if (consentType != null) {
+                    if (consentStatus != null) {
+                        if (consentMap.containsKey(consentType)) {
+                            throw OSFANLError.Companion.duplicateItemsIn("ConsentSettings");
+                        }
+                        consentMap.put(consentType, consentStatus);
+                    } else {
+                        throw OSFANLError.Companion.invalidType("Consent Status of " + consentType, "GRANTED, or DENIED");
                     }
-                    consentMap.put(consentType, consentStatus);
                 } else {
-                    Log.w(TAG, "Invalid consent type or status for item: " + consentItem);
+                    throw OSFANLError.Companion.invalidType("Consent Type", "AD_PERSONALIZATION, AD_STORAGE, AD_USER_DATA, or ANALYTICS_STORAGE");
                 }
             }
 
@@ -136,37 +142,13 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
                 this.firebaseAnalytics.setConsent(consentMap);
                 callbackContext.success();
             } else {
-                callbackContext.error("Error: No valid consent types provided.");
+                throw OSFANLError.Companion.missing("ConsentSettings");
             }
-        } catch (JSONException e) {
-            callbackContext.error(e.getMessage());
-        }
-    }
-
-    // Helper methods
-    private FirebaseAnalytics.ConsentType getConsentType(int type) {
-        switch (type) {
-            case 1:
-                return FirebaseAnalytics.ConsentType.AD_PERSONALIZATION;
-            case 2:
-                return FirebaseAnalytics.ConsentType.AD_STORAGE;
-            case 3:
-                return FirebaseAnalytics.ConsentType.AD_USER_DATA;
-            case 4:
-                return FirebaseAnalytics.ConsentType.ANALYTICS_STORAGE;
-            default:
-                return null;
-        }
-    }
-
-    private FirebaseAnalytics.ConsentStatus getConsentStatus(int status) {
-        switch (status) {
-            case 1:
-                return FirebaseAnalytics.ConsentStatus.GRANTED;
-            case 2:
-                return FirebaseAnalytics.ConsentStatus.DENIED;
-            default:
-                return null;
+        } catch (OSFANLError e) {
+            JSONObject result = new JSONObject();
+            result.put("code", e.getCode());
+            result.put("message", e.getMessage());
+            callbackContext.error(result);
         }
     }
 

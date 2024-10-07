@@ -57,6 +57,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <source-file src="src/ios/Common/OSFANLDefaultValues.swift" target-dir="Common" />
         <source-file src="src/ios/Common/OSFANLError.swift" target-dir="Common" />
         <source-file src="src/ios/Common/OSFANLInputDataFieldKey.swift" target-dir="Common" />
+        <source-file src="src/ios/Common/OSFANLConsentHelper.swift" target-dir="Common" />
 
         <source-file src="src/ios/InputTransformer/OSFANLInputTransformable.swift" target-dir="InputTransformer" />
         <source-file src="src/ios/InputTransformer/OSFANLInputTransformableModel.swift" target-dir="InputTransformer" />
@@ -108,6 +109,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <source-file src="src/android/com/outsystems/firebase/analytics/model/OSFANLBundle+putAny.kt" target-dir="app/src/main/kotlin/com/outsystems/firebase/analytics/model/" />
         <source-file src="src/android/com/outsystems/firebase/analytics/model/OSFANLJSONArray+extension.kt" target-dir="app/src/main/kotlin/com/outsystems/firebase/analytics/model/" />
         <source-file src="src/android/com/outsystems/firebase/analytics/model/OSFANLDefaultValues.kt" target-dir="app/src/main/kotlin/com/outsystems/firebase/analytics/model/" />
+        <source-file src="src/android/com/outsystems/firebase/analytics/model/OSFANLConsentModels.kt" target-dir="app/src/main/kotlin/com/outsystems/firebase/analytics/model/" />
         <source-file src="src/android/com/outsystems/firebase/analytics/model/OSFANLError.kt" target-dir="app/src/main/kotlin/com/outsystems/firebase/analytics/model/" />
         <source-file src="src/android/com/outsystems/firebase/analytics/model/OSFANLEventOutputModel.kt" target-dir="app/src/main/kotlin/com/outsystems/firebase/analytics/model/" />
         <source-file src="src/android/com/outsystems/firebase/analytics/model/OSFANLInputDataFieldKey.kt" target-dir="app/src/main/kotlin/com/outsystems/firebase/analytics/model/" />

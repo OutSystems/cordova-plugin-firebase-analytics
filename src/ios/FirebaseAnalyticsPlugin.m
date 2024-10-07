@@ -146,46 +146,20 @@
 - (void)setConsent:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* pluginResult = nil;
-    
-    NSString *jsonString = [command.arguments objectAtIndex:0];
-    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
-    NSError *error = nil;
-    NSArray *array = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
-    
-    if (error != nil) {
+    NSError *error;
+    NSDictionary *consentModel = [OSFANLConsentHelper createConsentModelWithError:command.arguments error:&error];
+    if (error) {
+        NSDictionary *errorInfo = error.userInfo;
+        NSString *code = errorInfo[@"code"] ?: @"UNKNOWN";
+        NSString *message = errorInfo[@"message"] ?: error.localizedDescription;
+        
+        NSString *jsonString = [NSString stringWithFormat:@"{\"code\":\"%@\",\"message\":\"%@\"}", code, message];
+        NSLog(@"Error: %@", jsonString);
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                                        messageAsString:error.description];
+                                         messageAsString:jsonString];
     } else {
-        NSMutableDictionary *firebaseConsentDict = [NSMutableDictionary dictionary];
-        
-        for (NSDictionary *item in array) {
-            NSNumber *type = item[@"Type"];
-            NSNumber *status = item[@"Status"];
-            FIRConsentType consentType = [self consentTypeFromNumber:type];
-            FIRConsentStatus consentStatus = [self consentStatusFromNumber:status];
-            
-            if (consentType && consentStatus) {
-                if (firebaseConsentDict[consentType]) {
-                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                                              messageAsString:@"Error: Duplicate consent types found in the input array."];
-                    break;
-                } else {
-                    firebaseConsentDict[consentType] = consentStatus;
-                }
-            } else {
-                NSLog(@"Warning: Ignoring invalid consent type or status for: %@ & %@", type, status);
-            }
-        }
-        
-        if (pluginResult == nil) {
-            if (firebaseConsentDict.count > 0) {
-                [FIRAnalytics setConsent:firebaseConsentDict];
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            } else {
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                                                  messageAsString:@"Error: No valid consent types provided."];
-            }
-        }
+        [FIRAnalytics setConsent:consentModel];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
@@ -223,36 +197,5 @@ typedef void (^showPermissionInformationPopupHandler)(UIAlertAction*);
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:error.userInfo];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
 }
-
-#pragma mark - Consent Data conversion helper methods
-
-- (FIRConsentType)consentTypeFromNumber:(NSNumber*)num
-{
-    switch ([num integerValue]) {
-        case 1:
-            return FIRConsentTypeAdPersonalization;
-        case 2:
-            return FIRConsentTypeAdStorage;
-        case 3:
-            return FIRConsentTypeAdUserData;
-        case 4:
-            return FIRConsentTypeAnalyticsStorage;
-        default:
-            return nil;
-    }
-}
-
-- (FIRConsentStatus)consentStatusFromNumber:(NSNumber *)num
-{
-    switch ([num integerValue]) {
-        case 1:
-            return FIRConsentStatusGranted;
-        case 2:
-            return FIRConsentStatusDenied;
-        default:
-            return nil;
-    }
-}
-
 
 @end
