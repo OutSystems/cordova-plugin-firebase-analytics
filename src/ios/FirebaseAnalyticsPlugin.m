@@ -145,23 +145,14 @@
 
 - (void)setConsent:(CDVInvokedUrlCommand*)command
 {
-    CDVPluginResult* pluginResult = nil;
     NSError *error;
     NSDictionary *consentModel = [OSFANLConsentHelper createConsentModel:command.arguments error:&error];
     if (error) {
-        NSDictionary *errorInfo = error.userInfo;
-        NSString *code = errorInfo[@"code"] ?: @"UNKNOWN";
-        NSString *message = errorInfo[@"message"] ?: error.localizedDescription;
-        
-        NSString *jsonString = [NSString stringWithFormat:@"{\"code\":\"%@\",\"message\":\"%@\"}", code, message];
-        NSLog(@"Error: %@", jsonString);
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                         messageAsString:jsonString];
+        [self sendError:error forCallbackId:command.callbackId];
     } else {
         [FIRAnalytics setConsent:consentModel];
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];
     }
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 typedef void (^showPermissionInformationPopupHandler)(UIAlertAction*);
