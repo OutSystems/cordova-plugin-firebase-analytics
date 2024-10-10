@@ -9,14 +9,19 @@ import by.chemerisuk.cordova.support.ReflectiveCordovaPlugin;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.outsystems.firebase.analytics.OSFANLManager;
+import com.outsystems.firebase.analytics.model.ConsentType;
+import com.outsystems.firebase.analytics.model.ConsentStatus;
 import com.outsystems.firebase.analytics.model.OSFANLError;
 import com.outsystems.firebase.analytics.model.OSFANLEventOutputModel;
 
 import org.apache.cordova.CallbackContext;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
@@ -95,6 +100,50 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
             OSFANLEventOutputModel output = manager.buildOutputEventFromInputJSON(params);
             this.firebaseAnalytics.logEvent(output.getName(), output.getParameters());
             callbackContext.success();
+        } catch (OSFANLError e) {
+            JSONObject result = new JSONObject();
+            result.put("code", e.getCode());
+            result.put("message", e.getMessage());
+            callbackContext.error(result);
+        }
+    }
+
+    @CordovaMethod
+    private void setConsent(String consentSetting, CallbackContext callbackContext) throws JSONException {
+        
+        try {
+            JSONArray consentSettings = new JSONArray(consentSetting);
+
+            Map<FirebaseAnalytics.ConsentType, FirebaseAnalytics.ConsentStatus> consentMap = new HashMap<>();
+
+            for (int i = 0; i < consentSettings.length(); i++) {
+                JSONObject consentItem = consentSettings.getJSONObject(i);
+                int typeValue = consentItem.getInt("Type");
+                int statusValue = consentItem.getInt("Status");
+
+                FirebaseAnalytics.ConsentType consentType = ConsentType.fromInt(typeValue);
+                FirebaseAnalytics.ConsentStatus consentStatus = ConsentStatus.fromInt(statusValue);
+
+                if (consentType != null) {
+                    if (consentStatus != null) {
+                        if (consentMap.containsKey(consentType)) {
+                            throw OSFANLError.Companion.duplicateItemsIn("ConsentSettings");
+                        }
+                        consentMap.put(consentType, consentStatus);
+                    } else {
+                        throw OSFANLError.Companion.invalidType("Consent Status of " + consentType, "GRANTED, or DENIED");
+                    }
+                } else {
+                    throw OSFANLError.Companion.invalidType("Consent Type", "AD_PERSONALIZATION, AD_STORAGE, AD_USER_DATA, or ANALYTICS_STORAGE");
+                }
+            }
+
+            if (!consentMap.isEmpty()) {
+                this.firebaseAnalytics.setConsent(consentMap);
+                callbackContext.success();
+            } else {
+                throw OSFANLError.Companion.missing("ConsentSettings");
+            }
         } catch (OSFANLError e) {
             JSONObject result = new JSONObject();
             result.put("code", e.getCode());

@@ -55,5 +55,22 @@ module.exports = {
     logECommerceEvent: function(event, eventParameters, items, success, error) {
         let args = [{event, eventParameters, items}];
         exec(success, error, PLUGIN_NAME, 'logECommerceEvent', args);
+    },
+    /**
+     * setConsent
+     *
+     * @param {string} consentSettings - A JSON string of an object containing consent settings.
+     * @param {function} [success] - Success callback function.
+     * @param {function} [error] - Error callback function.
+     *
+     * @example
+     * const consentSettings = {
+     *  AD_STORAGE: 'GRANTED',
+     *  ANALYTICS_STORAGE: 'GRANTED',
+     * };
+     * FirebaseAnalytics.setConsent(JSON.stringify(consentSettings));
+     */
+    setConsent: function (consentSettings, success, error) {
+        exec(success, error, PLUGIN_NAME, 'setConsent', [consentSettings]);
     }
 };

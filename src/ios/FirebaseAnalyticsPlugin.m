@@ -143,6 +143,18 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)setConsent:(CDVInvokedUrlCommand*)command
+{
+    NSError *error;
+    NSDictionary *consentModel = [OSFANLConsentHelper createConsentModel:command.arguments error:&error];
+    if (error) {
+        [self sendError:error forCallbackId:command.callbackId];
+    } else {
+        [FIRAnalytics setConsent:consentModel];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];
+    }
+}
+
 typedef void (^showPermissionInformationPopupHandler)(UIAlertAction*);
 - (void)showPermissionInformationPopup:
 (NSString *)title :
@@ -176,6 +188,5 @@ typedef void (^showPermissionInformationPopupHandler)(UIAlertAction*);
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:error.userInfo];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
 }
-
 
 @end
