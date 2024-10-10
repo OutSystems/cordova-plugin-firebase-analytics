@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 The changes documented here do not include those from the original repository.
 
+## 5.0.0-OS15
+
+- Feat(Android & iOS): Add setConsent functionality to allow users to set consent for analytics (https://outsystemsrd.atlassian.net/browse/RMET-3677 & https://outsystemsrd.atlassian.net/browse/RMET-3678).
+
 ## 5.0.0-OS14
 
 - Android | Update dependency to Firebase Analytics Android library (https://outsystemsrd.atlassian.net/browse/RMET-3608).
