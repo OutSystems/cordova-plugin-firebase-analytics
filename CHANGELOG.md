@@ -8,7 +8,7 @@ The changes documented here do not include those from the original repository.
 
 ## Unreleased
 
-- Fix(Android): Convert values to double if necessary (https://outsystemsrd.atlassian.net/browse/RMET-3822).
+- Fix(Android & iOS): Convert values to double if necessary (https://outsystemsrd.atlassian.net/browse/RMET-3822 & https://outsystemsrd.atlassian.net/browse/RMET-3823).
 
 ## 5.0.0-OS15
 
