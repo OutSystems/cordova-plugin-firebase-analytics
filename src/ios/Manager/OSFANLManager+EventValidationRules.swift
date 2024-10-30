@@ -120,7 +120,7 @@ private extension OSFANLManager {
         let parameter = dataField.rawValue
         guard let parameterValue = eventData[parameter] else { return try espace(isRequired, parameterMissing: parameter) }
 
-        let dataField: (type: StringConvertable.Type, value: StringConvertable?) = OSFANLInputDataFieldKey.decimalDataFields.contains(dataField) ? (Decimal.self, parameterValue as? Decimal) : (String.self, parameterValue as? String)
+        let dataField: (type: StringConvertable.Type, value: StringConvertable?) = dataField.isDecimalType ? (Decimal.self, parameterValue as? Decimal) : (String.self, parameterValue as? String)
         if dataField.value == nil { throw OSFANLError.invalidType(parameter, type: dataField.type.variableType) }
         return true // indicates that there's a value associated to `parameter`
     }

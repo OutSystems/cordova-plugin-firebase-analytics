@@ -17,5 +17,9 @@ enum OSFANLInputDataFieldKey: String {
 }
 
 extension OSFANLInputDataFieldKey {
-    static var decimalDataFields: [OSFANLInputDataFieldKey] { [.shipping, .tax, .value] }
+    private static var decimalDataFields: [OSFANLInputDataFieldKey] { [.shipping, .tax, .value] }
+    
+    var isDecimalType: Bool {
+        return OSFANLInputDataFieldKey.decimalDataFields.contains(self)
+    }
 }
