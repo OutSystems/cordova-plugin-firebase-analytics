@@ -1,6 +1,7 @@
 package com.outsystems.firebase.analytics.validator
 
 import android.os.Bundle
+import android.util.Log
 import com.outsystems.firebase.analytics.model.OSFANLError
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.CURRENCY
@@ -8,6 +9,8 @@ import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.EVENT_PAR
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.KEY
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.TYPE_NUMBER
 import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.VALUE
+import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.TAX
+import com.outsystems.firebase.analytics.model.OSFANLInputDataFieldKey.SHIPPING
 import com.outsystems.firebase.analytics.model.putAny
 import org.json.JSONArray
 
@@ -85,7 +88,22 @@ class OSFANLEventParameterValidator private constructor(
             hasCurrency = hasCurrency || key == CURRENCY.json
 
             parameterKeySet.add(key)
-            result.putAny(key, value)
+
+            try {
+                // value, tax, and shipping are actually decimal values, not strings
+                if (key == VALUE.json || key == TAX.json || key == SHIPPING.json) {
+                    result.putAny(key, value.toDouble()) // can throw NumberFormatException
+                } else {
+                    result.putAny(key, value)
+                }
+            } catch (e: NumberFormatException) {
+                Log.d(
+                    "OSFANLEventParameterValidator",
+                    "Tried to convert non-number to double. Exception: ${e.message}" 
+                )
+                // if conversion isn't successful, we still try to send the event
+                result.putAny(key, value)
+            }
         }
 
         // validate value / currency
