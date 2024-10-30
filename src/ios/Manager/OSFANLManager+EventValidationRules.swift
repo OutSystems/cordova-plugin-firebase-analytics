@@ -49,19 +49,17 @@ private extension OSFANLManager {
         // Validate parameters first
         if let parameters {
             if parameters.contains(.currencyAndValue) {
-                let valueContainsValue = try self.validate(parameter: OSFANLInputDataFieldKey.value.rawValue, ofType: Decimal.self, eventData)
-                try self.validate(
-                    parameter: OSFANLInputDataFieldKey.currency.rawValue, ofType: String.self, isRequired: valueContainsValue, eventData
-                )
+                let valueContainsValue = try self.validate(dataField: .value, eventData)
+                try self.validate(dataField: .currency, isRequired: valueContainsValue, eventData)
             }
             if parameters.contains(.transactionId) {
-                try self.validate(parameter: OSFANLInputDataFieldKey.transactionId.rawValue, ofType: String.self, isRequired: true, eventData)
+                try self.validate(dataField: .transactionId, isRequired: true, eventData)
             }
             if parameters.contains(.shipping) {
-                try self.validate(parameter: OSFANLInputDataFieldKey.shipping.rawValue, ofType: Decimal.self, eventData)
+                try self.validate(dataField: .shipping, eventData)
             }
             if parameters.contains(.tax) {
-                try self.validate(parameter: OSFANLInputDataFieldKey.tax.rawValue, ofType: Decimal.self, eventData)
+                try self.validate(dataField: .tax, eventData)
             }
         }
         
@@ -112,15 +110,18 @@ private extension OSFANLManager {
     }
     
     @discardableResult
-    private static func validate<T: CustomStringConvertible & StringConvertable>(parameter: String, ofType type: T.Type, isRequired: Bool = false, _ eventData: InputParameterData?) throws -> Bool {
+    private static func validate(dataField: OSFANLInputDataFieldKey, isRequired: Bool = false, _ eventData: InputParameterData?) throws -> Bool {
         func espace(_ isRequired: Bool, parameterMissing parameter: String) throws -> Bool {
             if isRequired { throw OSFANLError.missing(parameter) }
             return false // indicates that there's no value associated to `parameter`
         }
         
         guard let eventData, !eventData.isEmpty else { return try espace(isRequired, parameterMissing: "eventParameters") }
-        guard let parameterStringValue = eventData[parameter] else { return try espace(isRequired, parameterMissing: parameter) }
-        if T(value: parameterStringValue) == nil { throw OSFANLError.invalidType(parameter, type: T.variableType) }
+        let parameter = dataField.rawValue
+        guard let parameterValue = eventData[parameter] else { return try espace(isRequired, parameterMissing: parameter) }
+
+        let dataField: (type: StringConvertable.Type, value: StringConvertable?) = OSFANLInputDataFieldKey.decimalDataFields.contains(dataField) ? (Decimal.self, parameterValue as? Decimal) : (String.self, parameterValue as? String)
+        if dataField.value == nil { throw OSFANLError.invalidType(parameter, type: dataField.type.variableType) }
         return true // indicates that there's a value associated to `parameter`
     }
 }

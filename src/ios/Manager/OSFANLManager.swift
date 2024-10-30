@@ -15,17 +15,17 @@ extension OSFANLManager: OSFANLManageable {
     }
     
     func createEventModel(for inputArgument: InputParameterData) throws -> OSFANLOutputModel {
-        guard let eventName = inputArgument[OSFANLInputDataFieldKey.event.rawValue], !eventName.isEmpty else {
+        guard let eventName = inputArgument[OSFANLInputDataFieldKey.event.rawValue] as? String, !eventName.isEmpty else {
             throw OSFANLError.missing(OSFANLInputDataFieldKey.event.rawValue)
         }
         
         var eventParameterArray: [InputParameterData]?
-        if let eventParameterString = inputArgument[OSFANLInputDataFieldKey.eventParameters.rawValue] {
+        if let eventParameterString = inputArgument[OSFANLInputDataFieldKey.eventParameters.rawValue] as? String {
             eventParameterArray = self.convert(jsonString: eventParameterString)
         }
         
         var itemArray: [InputItemData]?
-        if let itemString = inputArgument[OSFANLInputDataFieldKey.items.rawValue] {
+        if let itemString = inputArgument[OSFANLInputDataFieldKey.items.rawValue] as? String {
             itemArray = self.convert(jsonString: itemString)
         }
         

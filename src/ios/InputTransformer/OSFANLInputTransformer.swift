@@ -8,15 +8,26 @@ struct OSFANLInputTransformer: OSFANLInputTransformable {
             eventParameterData = flatResult
         }
         let itemArray = try self.transform(itemArray)
-        
+
         return .init(eventParameterData, itemArray)
     }
 }
 
 private extension OSFANLInputTransformer {
     func flat(keyValueMapArray array: [InputParameterData]) throws -> InputParameterData {
-        let flatKeyValueArray = array.map {
-            [$0[OSFANLInputDataFieldKey.key.rawValue, default: ""]: $0[OSFANLInputDataFieldKey.value.rawValue, default: ""]]
+        let flatKeyValueArray = array.reduce(into: [InputParameterData]()) { partialResult, current in
+            guard let dataFieldKey = current[OSFANLInputDataFieldKey.key.rawValue] as? String,
+                  let dataValue = current[OSFANLInputDataFieldKey.value.rawValue] as? String
+            else { return }
+
+            let value: StringConvertable = if let dataField = OSFANLInputDataFieldKey(rawValue: dataFieldKey),
+                                              OSFANLInputDataFieldKey.decimalDataFields.contains(dataField) {
+                Decimal(string: dataValue) ?? .zero
+            } else {
+                dataValue
+            }
+
+            partialResult.append([dataFieldKey: value])
         }
         let flatKeyValueDictionary = self.flat(dictionaryArray: flatKeyValueArray)
         

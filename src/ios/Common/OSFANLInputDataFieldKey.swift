@@ -15,3 +15,7 @@ enum OSFANLInputDataFieldKey: String {
     case transactionId = "transaction_id"
     case value
 }
+
+extension OSFANLInputDataFieldKey {
+    static var decimalDataFields: [OSFANLInputDataFieldKey] { [.shipping, .tax, .value] }
+}
