@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 The changes documented here do not include those from the original repository.
 
+## Unreleased
+
+### Features
+- [iOS and Android] Adds support for Capacitor (MABS 12) (https://outsystemsrd.atlassian.net/browse/RMET-3643).
+
+### Chores
+- [iOS and Android] Removes dependency to `cordova-outsystems-firebase-core` (https://outsystemsrd.atlassian.net/browse/RMET-3643).
+- [Android] Removes dependency to `cordova-support-android-plugin` (https://outsystemsrd.atlassian.net/browse/RMET-3643).
+- [Android] Removes `build_gradle_add_dependency.js` hook (https://outsystemsrd.atlassian.net/browse/RMET-3643).
+
 ## 5.0.0-OS17
 
 ### Chores
