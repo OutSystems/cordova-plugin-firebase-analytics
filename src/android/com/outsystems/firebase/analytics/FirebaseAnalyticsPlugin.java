@@ -4,9 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
-import by.chemerisuk.cordova.support.CordovaMethod;
-import by.chemerisuk.cordova.support.ReflectiveCordovaPlugin;
-
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.outsystems.firebase.analytics.OSFANLManager;
 import com.outsystems.firebase.analytics.model.ConsentType;
@@ -15,6 +12,7 @@ import com.outsystems.firebase.analytics.model.OSFANLError;
 import com.outsystems.firebase.analytics.model.OSFANLEventOutputModel;
 
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaPlugin;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,55 +22,103 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
+public class FirebaseAnalyticsPlugin extends CordovaPlugin {
     private static final String TAG = "FirebaseAnalyticsPlugin";
 
     private FirebaseAnalytics firebaseAnalytics;
 
-    private OSFANLManager manager = new OSFANLManager();
+    private final OSFANLManager manager = new OSFANLManager();
 
     @Override
     protected void pluginInitialize() {
         Log.d(TAG, "Starting Firebase Analytics plugin");
         Context context = this.cordova.getActivity().getApplicationContext();
-        this.firebaseAnalytics = FirebaseAnalytics.getInstance(context);
+        try {
+            this.firebaseAnalytics = FirebaseAnalytics.getInstance(context);
+        } catch (Exception e) {
+            Log.e(TAG, "Unable to instantiate Analytics", e);
+        }
+
     }
 
-    @CordovaMethod
+    @Override
+    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+        switch (action) {
+            case "logEvent":
+                String eventName = args.getString(0);
+                JSONObject eventParams = args.getJSONObject(1);
+                logEvent(eventName, eventParams, callbackContext);
+                break;
+            case "setUserId":
+                String userId = args.getString(0);
+                setUserId(userId, callbackContext);
+                break;
+            case "setUserProperty":
+                String propertyName = args.getString(0);
+                String propertyValue = args.getString(1);
+                setUserProperty(propertyName, propertyValue, callbackContext);
+                break;
+            case "resetAnalyticsData":
+                resetAnalyticsData(callbackContext);
+                break;
+            case "setEnabled":
+                boolean isEnabled = args.getBoolean(0);
+                setEnabled(isEnabled, callbackContext);
+                break;
+            case "setCurrentScreen":
+                String screenName = args.getString(0);
+                setCurrentScreen(screenName, callbackContext);
+                break;
+            case "setDefaultEventParameters":
+                JSONObject defaultEventParams = args.getJSONObject(0);
+                setDefaultEventParameters(defaultEventParams, callbackContext);
+                break;
+            case "requestTrackingAuthorization":
+                requestTrackingAuthorization(callbackContext);
+                break;
+            case "logECommerceEvent":
+                JSONObject eCommerceParams = args.getJSONObject(0);
+                logECommerceEvent(eCommerceParams, callbackContext);
+                break;
+            case "setConsent":
+                String consentSetting = args.getString(0);
+                setConsent(consentSetting, callbackContext);
+                break;
+            default:
+                return super.execute(action, args, callbackContext);
+        }
+        return true;
+    }
+
     private void logEvent(String name, JSONObject params, CallbackContext callbackContext) throws JSONException {
         this.firebaseAnalytics.logEvent(name, parse(params));
         callbackContext.success();
     }
 
-    @CordovaMethod
     private void setUserId(String userId, CallbackContext callbackContext) {
         this.firebaseAnalytics.setUserId(userId);
 
         callbackContext.success();
     }
 
-    @CordovaMethod
     private void setUserProperty(String name, String value, CallbackContext callbackContext) {
         this.firebaseAnalytics.setUserProperty(name, value);
 
         callbackContext.success();
     }
 
-    @CordovaMethod
     private void resetAnalyticsData(CallbackContext callbackContext) {
         this.firebaseAnalytics.resetAnalyticsData();
 
         callbackContext.success();
     }
 
-    @CordovaMethod
     private void setEnabled(boolean enabled, CallbackContext callbackContext) {
         this.firebaseAnalytics.setAnalyticsCollectionEnabled(enabled);
 
         callbackContext.success();
     }
 
-    @CordovaMethod
     private void setCurrentScreen(String screenName, CallbackContext callbackContext) {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.SCREEN_NAME, screenName);
@@ -81,20 +127,17 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
         callbackContext.success();
     }
 
-    @CordovaMethod
     private void setDefaultEventParameters(JSONObject params, CallbackContext callbackContext) throws JSONException {
         this.firebaseAnalytics.setDefaultEventParameters(parse(params));
 
         callbackContext.success();
     }
 
-    @CordovaMethod
-    private void requestTrackingAuthorization(JSONObject params, CallbackContext callbackContext) throws JSONException {
+    private void requestTrackingAuthorization(CallbackContext callbackContext) {
         //Does nothing. This is an iOS specific method.
         callbackContext.success();
     }
 
-    @CordovaMethod
     private void logECommerceEvent(JSONObject params, CallbackContext callbackContext) throws JSONException {
         try {
             OSFANLEventOutputModel output = manager.buildOutputEventFromInputJSON(params);
@@ -108,7 +151,6 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
         }
     }
 
-    @CordovaMethod
     private void setConsent(String consentSetting, CallbackContext callbackContext) throws JSONException {
         
         try {
