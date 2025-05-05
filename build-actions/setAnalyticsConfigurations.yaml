@@ -1,0 +1,26 @@
+variables:
+  ANALYTICS_COLLECTION_ENABLED:
+    type: boolean
+    default: true
+  USER_TRACKING_USAGE_DESCRIPTION:
+    type: string
+    default: "The app needs your attention."
+platforms:
+  android:
+    manifest:
+      - file: AndroidManifest.xml
+        target: manifest/application
+        inject: |
+          <meta-data android:name="google_analytics_automatic_screen_reporting_enabled" android:value="$ANALYTICS_COLLECTION_ENABLED" />
+          
+      - file: AndroidManifest.xml
+        target: manifest/application
+        inject: |
+          <meta-data android:name="firebase_analytics_collection_enabled" android:value="$ANALYTICS_COLLECTION_ENABLED" />
+  
+  ios:
+    plist:
+       - replace: false
+         entries:
+            - FirebaseAutomaticScreenReportingEnabled: $ANALYTICS_COLLECTION_ENABLED
+            - NSUserTrackingUsageDescription: $USER_TRACKING_USAGE_DESCRIPTION
