@@ -1,7 +1,7 @@
 import FirebaseAnalytics
 import FirebaseCore
 
-@objc enum ConsentTypeRawValue: Int, CustomStringConvertible, CaseIterable {
+@objc public enum ConsentTypeRawValue: Int, CustomStringConvertible, CaseIterable {
     case adPersonalization = 1
     case adStorage = 2
     case adUserData = 3
@@ -29,7 +29,7 @@ import FirebaseCore
     }
 }
 
-@objc enum ConsentStatusRawValue: Int, CustomStringConvertible, CaseIterable {
+@objc public enum ConsentStatusRawValue: Int, CustomStringConvertible, CaseIterable {
     case granted = 1
     case denied = 2
     
@@ -53,8 +53,8 @@ import FirebaseCore
     }
 }
 
-@objc class OSFANLConsentHelper: NSObject {
-    @objc static func createConsentModel(_ commandArguments: NSArray) throws -> [ConsentType: ConsentStatus] {
+@objc public class OSFANLConsentHelper: NSObject {
+    @objc public static func createConsentModel(_ commandArguments: NSArray) throws -> [ConsentType: ConsentStatus] {
         guard let jsonString = commandArguments[0] as? String,
               let jsonData = jsonString.data(using: .utf8),
               let array = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [[String: Any]] else {

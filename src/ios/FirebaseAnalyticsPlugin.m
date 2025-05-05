@@ -1,5 +1,9 @@
 #import "FirebaseAnalyticsPlugin.h"
-#import "OutSystems-Swift.h"
+#if __has_include(<CordovaPluginsStatic/CordovaPluginsStatic-Swift.h>)
+    #import <CordovaPluginsStatic/CordovaPluginsStatic-Swift.h>
+#else
+    #import "OutSystems-Swift.h"
+#endif
 
 @import AppTrackingTransparency;
 @import FirebaseAnalytics;
