@@ -9,7 +9,7 @@ The changes documented here do not include those from the original repository.
 ## 5.0.0-OS18
 
 ### Features
-- [iOS and Android] Adds support for Capacitor (MABS 12) (https://outsystemsrd.atlassian.net/browse/RMET-3643).
+- [iOS and Android] Adds support for Capacitor (https://outsystemsrd.atlassian.net/browse/RMET-3643).
 
 ### Chores
 - [iOS and Android] Removes dependency to `cordova-outsystems-firebase-core` (https://outsystemsrd.atlassian.net/browse/RMET-3643).
