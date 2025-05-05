@@ -7,7 +7,7 @@ import FirebaseCore
     case adUserData = 3
     case analyticsStorage = 4
     
-    var description: String {
+    public var description: String {
         return switch self {
         case .adPersonalization: "ad_personalization"
         case .adStorage: "ad_storage"
@@ -33,7 +33,7 @@ import FirebaseCore
     case granted = 1
     case denied = 2
     
-    var description: String {
+    public var description: String {
         return switch self {
         case .granted: "granted"
         case .denied: "denied"
