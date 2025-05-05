@@ -8,10 +8,10 @@ extension DefaultKeyValueData {
     }
 }
 
-typealias InputParameterData = [String: Any]
+public typealias InputParameterData = [String: Any]
 typealias InputItemData = DefaultKeyValueData
 typealias OutputParameterData = DefaultKeyValueData
 
-@objc protocol OSFANLManageable {
+@objc public protocol OSFANLManageable {
     func createEventModel(for inputArgument: InputParameterData) throws -> OSFANLOutputModel
 }
