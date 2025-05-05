@@ -8,7 +8,7 @@ extension DefaultKeyValueData {
     }
 }
 
-public typealias InputParameterData = [String: Any]
+typealias InputParameterData = [String: Any]
 typealias InputItemData = DefaultKeyValueData
 typealias OutputParameterData = DefaultKeyValueData
 
