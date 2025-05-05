@@ -12,6 +12,6 @@ typealias InputParameterData = [String: Any]
 typealias InputItemData = DefaultKeyValueData
 typealias OutputParameterData = DefaultKeyValueData
 
-@objc public protocol OSFANLManageable {
-    public func createEventModel(for inputArgument: InputParameterData) throws -> OSFANLOutputModel
+@objc protocol OSFANLManageable {
+    func createEventModel(for inputArgument: InputParameterData) throws -> OSFANLOutputModel
 }
