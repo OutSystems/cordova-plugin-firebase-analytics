@@ -26,6 +26,7 @@ platforms:
       - replace: true
         entries:
           - FirebaseAutomaticScreenReportingEnabled: $ANALYTICS_COLLECTION_ENABLED
+          - FIREBASE_ANALYTICS_COLLECTION_ENABLED: $ANALYTICS_COLLECTION_ENABLED
             
       - replace: true
         condition: eq($ENABLE_APP_TRACKING_TRANSPARENCY_PROMPT, true)
