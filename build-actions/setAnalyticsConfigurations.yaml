@@ -10,12 +10,7 @@ variables:
     default: true
 platforms:
   android:
-    manifest:
-      - file: AndroidManifest.xml
-        target: manifest/application
-        inject: |
-          <meta-data android:name="google_analytics_automatic_screen_reporting_enabled" android:value="$ANALYTICS_COLLECTION_ENABLED" />
-          
+    manifest:          
       - file: AndroidManifest.xml
         target: manifest/application
         inject: |
