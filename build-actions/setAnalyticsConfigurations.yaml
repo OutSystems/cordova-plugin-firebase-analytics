@@ -14,8 +14,8 @@ platforms:
       - file: AndroidManifest.xml
         target: manifest/application
         inject: |
+          <meta-data android:name="google_analytics_automatic_screen_reporting_enabled" android:value="true"/>
           <meta-data android:name="firebase_analytics_collection_enabled" android:value="$ANALYTICS_COLLECTION_ENABLED" />
-  
   ios:
     plist:
       - replace: true
