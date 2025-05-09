@@ -20,7 +20,7 @@ platforms:
     plist:
       - replace: true
         entries:
-          - FirebaseAutomaticScreenReportingEnabled: $ANALYTICS_COLLECTION_ENABLED
+          - FirebaseAutomaticScreenReportingEnabled: true
           - FIREBASE_ANALYTICS_COLLECTION_ENABLED: $ANALYTICS_COLLECTION_ENABLED
             
       - replace: true
