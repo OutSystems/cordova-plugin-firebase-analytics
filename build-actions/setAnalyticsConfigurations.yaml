@@ -5,6 +5,9 @@ variables:
   USER_TRACKING_USAGE_DESCRIPTION:
     type: string
     default: "The app needs your attention."
+  ENABLE_APP_TRACKING_TRANSPARENCY_PROMPT:
+    type: boolean
+    default: true
 platforms:
   android:
     manifest:
@@ -20,7 +23,11 @@ platforms:
   
   ios:
     plist:
-       - replace: false
-         entries:
-            - FirebaseAutomaticScreenReportingEnabled: $ANALYTICS_COLLECTION_ENABLED
-            - NSUserTrackingUsageDescription: $USER_TRACKING_USAGE_DESCRIPTION
+      - replace: true
+        entries:
+          - FirebaseAutomaticScreenReportingEnabled: $ANALYTICS_COLLECTION_ENABLED
+            
+      - replace: true
+        condition: eq($ENABLE_APP_TRACKING_TRANSPARENCY_PROMPT, true)
+        entries:
+          - NSUserTrackingUsageDescription: $USER_TRACKING_USAGE_DESCRIPTION
