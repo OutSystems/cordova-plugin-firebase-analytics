@@ -17,22 +17,39 @@ module.exports = function (context) {
     if (collectionEnabled.toLowerCase() == 'false') {
         let parser = new xml2js.Parser();
         parser.parseStringPromise(fs.readFileSync(manifestPath, 'utf8')).then((result) => {
-            let metadata = result.manifest.application[0]['meta-data'];
-            metadata.push({
-                '$': {
-                    'android:name': 'firebase_analytics_collection_enabled',
-                    'android:value': 'false'
+            const appNode = result.manifest.application[0];
+            appNode['meta-data'] = appNode['meta-data'] || [];
+            const metadata = appNode['meta-data'];
+
+            let updated = false;
+
+            // find existing entry index
+            const index = metadata.findIndex(item => 
+                item['$']?.['android:name'] === 'firebase_analytics_collection_enabled'
+            );
+
+            if (index !== -1) {
+                // entry exists, check if we should update it
+                if (metadata[index]['$']['android:value'] === 'true') {
+                    metadata[index]['$']['android:value'] = 'false';
+                    updated = true;
                 }
-            })
+            } else {
+                // entry doesn't exist, add it
+                metadata.push({
+                    '$': {
+                        'android:name': 'firebase_analytics_collection_enabled',
+                        'android:value': 'false'
+                     }
+                });
+                updated = true;
+            }
 
-            let builder = new xml2js.Builder();
-            let xml = builder.buildObject(result);
-
-            fs.writeFileSync(manifestPath, xml, (err) => {
-                throw new Error (`OUTSYSTEMS_PLUGIN_ERROR: Something went wrong while saving the AndroidManifest.xml file. Please check the logs for more information.`);
-            });
-
-            defer.resolve();
+            if (updated) {
+                const builder = new xml2js.Builder();
+                const xml = builder.buildObject(result);
+                fs.writeFileSync(manifestPath, xml);
+            }
         })
         .catch((err) => {
             throw new Error (`OUTSYSTEMS_PLUGIN_ERROR: Something went wrong while parsing the AndroidManifest.xml file. Please check the logs for more information.`);
