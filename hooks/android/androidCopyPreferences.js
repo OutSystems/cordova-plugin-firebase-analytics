@@ -60,6 +60,7 @@ module.exports = function (context) {
                 fs.writeFileSync(manifestPath, xml);
             }
             console.log("ANALYTICS: end of parseStringPromise");
+            defer.resolve();
         })
         .catch((err) => {
             console.log("ANALYTICS: entered catch block");
