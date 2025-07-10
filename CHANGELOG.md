@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 The changes documented here do not include those from the original repository.
 
+## Unreleased
+
+### Fixes
+- [Android] Avoid duplicating entries in `AndroidManifest.xml` with hook for MOCA (https://outsystemsrd.atlassian.net/browse/RMET-4277).
+
 ## 5.0.0-OS18
 
 ### Features
