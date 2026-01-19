@@ -29,9 +29,6 @@ module.exports = function (context) {
     if (collectionEnabled.toLowerCase() == 'false') {
         obj['FIREBASE_ANALYTICS_COLLECTION_ENABLED'] = false;
     }
-    
-    // always set FirebaseAutomaticScreenReportingEnabled it to true
-    obj['FirebaseAutomaticScreenReportingEnabled'] = true;
 
     fs.writeFileSync(infoPlistPath, plist.build(obj));
 };
