@@ -20,7 +20,6 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <engine name="cordova-ios" version=">=5.1.1"/>
     </engines>
 
-    <preference name="AUTOMATIC_SCREEN_REPORTING_ENABLED" default="true" />
     <preference name="USER_TRACKING_DESCRIPTION_IOS" default="$(PRODUCT_NAME) needs your attention." />
 
     <platform name="ios">
@@ -90,10 +89,6 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
         <edit-config target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.INTERNET" />
-        </edit-config>
-
-        <edit-config target="AndroidManifest.xml" parent="/manifest/application">
-            <meta-data android:name="google_analytics_automatic_screen_reporting_enabled" android:value="$AUTOMATIC_SCREEN_REPORTING_ENABLED" />
         </edit-config>
 
         <framework src="build.gradle" custom="true" type="gradleReference" />
