@@ -12,6 +12,8 @@ module.exports = function (context) {
     let infoPlistPath = path.join(projectRoot, 'platforms/ios/' + appName + '/'+ appName +'-info.plist');
     let obj = plist.parse(fs.readFileSync(infoPlistPath, 'utf8'));
 
+
+    // set NSUserTrackingUsageDescription if EnableAppTrackingTransparencyPrompt is true
     let enableAppTracking = configParser.getPlatformPreference("EnableAppTrackingTransparencyPrompt", "ios");
     if(enableAppTracking == "true" || enableAppTracking == ""){
         let userTrackingDescription = configParser.getPlatformPreference("USER_TRACKING_DESCRIPTION_IOS", "ios");
@@ -20,13 +22,13 @@ module.exports = function (context) {
         }
     }
     else if(enableAppTracking == "false"){
-        delete obj['NSUserTrackingUsageDescription'];        
+        delete obj['NSUserTrackingUsageDescription'];
     }
 
     let collectionEnabled = configParser.getGlobalPreference("ANALYTICS_COLLECTION_ENABLED");
     if (collectionEnabled.toLowerCase() == 'false') {
         obj['FIREBASE_ANALYTICS_COLLECTION_ENABLED'] = false;
-    } 
+    }
 
     fs.writeFileSync(infoPlistPath, plist.build(obj));
 };
