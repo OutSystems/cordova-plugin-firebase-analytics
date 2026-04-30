@@ -18,8 +18,23 @@ let package = Package(
             name: "cordova-plugin-firebase-analytics",
             dependencies: [
                 .product(name: "Cordova", package: "cordova-ios"),
+                .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk"),
+                "FirebaseAnalyticsPluginSwift"
+            ],
+            path: "src/ios",
+            sources: ["FirebaseAnalyticsPlugin.m"],
+            publicHeadersPath: "."),
+        .target(
+            name: "FirebaseAnalyticsPluginSwift",
+            dependencies: [
                 .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk")
             ],
-            path: "src/ios")
+            path: "src/ios",
+            sources: [
+                "Common",
+                "InputTransformer",
+                "Manager",
+                "Validator"
+            ])
     ]
 )

@@ -1,5 +1,7 @@
 #import "FirebaseAnalyticsPlugin.h"
-#if __has_include(<CordovaPluginsStatic/CordovaPluginsStatic-Swift.h>)
+#if defined(SWIFT_PACKAGE)
+    @import FirebaseAnalyticsPluginSwift;
+#elif __has_include(<CordovaPluginsStatic/CordovaPluginsStatic-Swift.h>)
     #import <CordovaPluginsStatic/CordovaPluginsStatic-Swift.h>
 #else
     #import "OutSystems-Swift.h"
