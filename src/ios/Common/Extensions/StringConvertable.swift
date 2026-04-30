@@ -1,5 +1,3 @@
-import Foundation
-
 protocol StringConvertable {
     static var variableType: String { get }
 }

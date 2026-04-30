@@ -20,10 +20,6 @@ let package = Package(
                 .product(name: "Cordova", package: "cordova-ios"),
                 .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk")
             ],
-            path: "src/ios",
-            exclude: [
-                "FirebaseAnalyticsPlugin.h",
-                "FirebaseAnalyticsPlugin.m"
-            ])
+            path: "src/ios")
     ]
 )

@@ -1,4 +1,3 @@
-import Foundation
 import FirebaseAnalytics
 import FirebaseCore
 

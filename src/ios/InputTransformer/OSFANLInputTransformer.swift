@@ -1,5 +1,3 @@
-import Foundation
-
 struct OSFANLInputTransformer: OSFANLInputTransformable {
     func transform(_ eventParameterArray: [InputParameterData]?, _ itemArray: [InputItemData]?) throws -> OSFANLInputTransformableModel {
         do {

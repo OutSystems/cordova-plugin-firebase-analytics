@@ -1,5 +1,3 @@
-import Foundation
-
 enum OSFANLError: Error {
     case duplicateItemsIn(parameter: String)
     case duplicateKeys

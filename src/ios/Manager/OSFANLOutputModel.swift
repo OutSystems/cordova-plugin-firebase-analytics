@@ -1,5 +1,3 @@
-import Foundation
-
 @objc public class OSFANLOutputModel: NSObject {
     @objc public let name: String
     @objc public let parameters: [String: Any]
