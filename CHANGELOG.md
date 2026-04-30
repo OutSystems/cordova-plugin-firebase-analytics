@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 The changes documented here do not include those from the original repository.
 
+## 5.0.0-OS21
+
+### Features
+- [iOS] Add Swift Package Manager support and bump `FirebaseAnalytics` to version `10.29.0` (https://outsystemsrd.atlassian.net/browse/RMET-5138).
+
 ## 5.0.0-OS20
 
 ### Chores

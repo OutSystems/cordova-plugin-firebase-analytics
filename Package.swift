@@ -7,7 +7,7 @@ let package = Package(
     products: [
         .library(
             name: "cordova-plugin-firebase-analytics",
-            targets: ["FirebaseAnalyticsPlugin"])
+            targets: ["cordova-plugin-firebase-analytics"])
     ],
     dependencies: [
         .package(url: "https://github.com/apache/cordova-ios.git", branch: "master"),
@@ -15,11 +15,15 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "FirebaseAnalyticsPlugin",
+            name: "cordova-plugin-firebase-analytics",
             dependencies: [
                 .product(name: "Cordova", package: "cordova-ios"),
                 .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk")
             ],
-            path: "src/ios")
+            path: "src/ios",
+            exclude: [
+                "FirebaseAnalyticsPlugin.h",
+                "FirebaseAnalyticsPlugin.m"
+            ])
     ]
 )

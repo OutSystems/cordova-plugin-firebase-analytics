@@ -1,3 +1,5 @@
+import Foundation
+
 class OSFANLManager {
     private let inputTransformer: OSFANLInputTransformable
     private let eventValidator: OSFANLEventValidator
