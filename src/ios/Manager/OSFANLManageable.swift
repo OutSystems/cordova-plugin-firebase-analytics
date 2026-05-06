@@ -1,3 +1,5 @@
+import Foundation
+
 typealias DefaultKeyValueData = [String: Any]
 
 extension DefaultKeyValueData {
