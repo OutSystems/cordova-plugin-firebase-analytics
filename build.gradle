@@ -16,8 +16,6 @@ dependencies {
 }
 
 cdvPluginPostBuildExtras.add {
-    if (project.extensions.findByName('googleServices') == null) {
-        apply plugin: com.google.gms.googleservices.GoogleServicesPlugin
-        googleServices.disableVersionCheck = true
-    }
+    apply plugin: com.google.gms.googleservices.GoogleServicesPlugin
+    googleServices.disableVersionCheck = true
 }
