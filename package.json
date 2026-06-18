@@ -29,7 +29,11 @@
     "cordova-ios"
   ],
   "scripts": {
-    "version": "perl -p -i -e 's/(version=)\"\\d+\\.\\d+\\.\\d+\"/$1\"'$npm_package_version'\"$2/' plugin.xml && git add plugin.xml",
-    "postversion": "git push && git push --tags"
+    "release": "node scripts/release.js"
+  },
+  "devDependencies": {
+    "@octokit/rest": "^21.0.2",
+    "simple-git": "^3.25.0",
+    "xml2js": "^0.6.2"
   }
 }
