@@ -1,3 +1,11 @@
+## [5.0.0-OS23]
+
+### 2026-06-19
+
+- ci: Trigger release on push to outsystems (#62)
+- ci: Release and Changelog Automation (#61)
+
+
 # Changelog (old)
 =========
 
