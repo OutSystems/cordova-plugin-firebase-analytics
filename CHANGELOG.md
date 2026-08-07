@@ -1,3 +1,10 @@
+## [5.0.0-OS24]
+
+### 2026-08-07
+
+- ci: use node 24 and update action versions (#63)
+
+
 ## [5.0.0-OS23]
 
 ### 2026-06-19
