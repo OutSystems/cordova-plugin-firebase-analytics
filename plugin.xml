@@ -60,6 +60,8 @@
                                             <param name="android-package" value="com.outsystems.plugins.firebase.analytics.FirebaseAnalyticsPlugin"/>
                                             <param name="onload" value="true"/>
                                  </feature>
+                                 <preference name="GradlePluginKotlinEnabled" value="true"/>
+                                 <preference name="GradlePluginKotlinCodeStyle" value="official"/>
                       </config-file>
                       <edit-config target="AndroidManifest.xml" parent="/*">
                                  <uses-permission android:name="android.permission.INTERNET"/>
