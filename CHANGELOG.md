@@ -1,3 +1,10 @@
+## [5.0.0-OS25]
+
+### 2026-08-21
+
+- chore(android): Add missing kotlin declaration in plugin.xml (#64)
+
+
 ## [5.0.0-OS24]
 
 ### 2026-08-07
