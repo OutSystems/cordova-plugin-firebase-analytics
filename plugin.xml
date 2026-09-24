@@ -23,11 +23,11 @@
                                             <param name="ios-package" value="FirebaseAnalyticsPlugin"/>
                                             <param name="onload" value="true"/>
                                  </feature>
+                                 <preference name="SwiftVersion" value="5" />
                       </config-file>
                       <config-file target="*-Info.plist" parent="NSUserTrackingUsageDescription">
                                  <string>$USER_TRACKING_DESCRIPTION_IOS</string>
                       </config-file>
-                      <dependency id="cordova-plugin-add-swift-support" url="https://github.com/OutSystems/cordova-plugin-add-swift-support.git#2.0.3-OS2"/>
                       <header-file src="src/ios/FirebaseAnalyticsPlugin.h"/>
                       <source-file src="src/ios/FirebaseAnalyticsPlugin.m"/>
                       <source-file src="src/ios/Common/Extensions/StringConvertable.swift" target-dir="Common/Extensions"/>
