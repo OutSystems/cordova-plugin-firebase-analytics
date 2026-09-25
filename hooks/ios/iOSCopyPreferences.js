@@ -8,8 +8,13 @@ module.exports = function (context) {
     let configXML = path.join(projectRoot, 'config.xml');
     let configParser = new ConfigParser(configXML);
     
-    let appName = configParser.name();
-    let infoPlistPath = path.join(projectRoot, 'platforms/ios/' + appName + '/'+ appName +'-info.plist');
+    // cordova-ios 8+ uses 'App' as the fixed project folder name and 'App-Info.plist';
+    // cordova-ios <8 uses the app name as the project folder name.
+    let infoPlistPath = path.join(projectRoot, 'platforms/ios/App/App-Info.plist');
+    if (!fs.existsSync(infoPlistPath)) {
+        let appName = configParser.name();
+        infoPlistPath = path.join(projectRoot, 'platforms/ios/' + appName + '/' + appName + '-Info.plist');
+    }
     let obj = plist.parse(fs.readFileSync(infoPlistPath, 'utf8'));
 
 
