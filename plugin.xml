@@ -28,6 +28,7 @@
                       <config-file target="*-Info.plist" parent="NSUserTrackingUsageDescription">
                                  <string>$USER_TRACKING_DESCRIPTION_IOS</string>
                       </config-file>
+                      <dependency id="cordova-plugin-add-swift-support" url="https://github.com/OutSystems/cordova-plugin-add-swift-support.git#fix/RMET-5439/RMET-5440/cordova-ios8"/>
                       <header-file src="src/ios/FirebaseAnalyticsPlugin.h"/>
                       <source-file src="src/ios/FirebaseAnalyticsPlugin.m"/>
                       <source-file src="src/ios/Common/Extensions/StringConvertable.swift" target-dir="Common/Extensions"/>
