@@ -1,3 +1,10 @@
+## [5.0.0-OS26]
+
+### 2026-10-01
+
+- fix: builds on MABS 13 Cordova Android 15 and iOS 8  (#65)
+
+
 ## [5.0.0-OS25]
 
 ### 2026-08-21
