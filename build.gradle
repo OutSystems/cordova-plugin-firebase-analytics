@@ -21,3 +21,10 @@ cdvPluginPostBuildExtras.add {
         googleServices.disableVersionCheck = true
     }
 }
+
+// Cordova apps only get this file, so it writes its own R8 rules where clean won't remove them.
+// Firebase BoM 33.2.0 brings firebase-components 18.0.0, which loses these constructors under AGP 9.
+def r8Rules = new File(rootDir, '.gradle/firebase-analytics-rules.pro')
+r8Rules.parentFile.mkdirs()
+r8Rules.text = '-keep class * implements com.google.firebase.components.ComponentRegistrar { <init>(); }\n'
+android.buildTypes.release.proguardFile(r8Rules)
